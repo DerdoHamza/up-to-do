@@ -5,6 +5,7 @@ import 'package:up_to_do/features/login.dart';
 import 'package:up_to_do/services/cache_helper.dart';
 import 'package:up_to_do/services/component.dart';
 import 'package:up_to_do/services/constant.dart';
+import 'package:up_to_do/services/cubit/to_do_cubit.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -34,6 +35,7 @@ class _SplashState extends State<Splash> {
     userId = CacheHelper.getCacheData(key: 'userId');
     Widget start;
     if (userId != null) {
+      ToDoCubit.get(context).getAllTasks();
       start = Home();
     } else {
       start = Login();

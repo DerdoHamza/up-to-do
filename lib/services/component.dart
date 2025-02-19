@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:up_to_do/models/get_task_model.dart';
 import 'package:up_to_do/models/task_model.dart';
 import 'package:up_to_do/services/cubit/to_do_cubit.dart';
 import 'package:up_to_do/services/notification_service.dart';
@@ -84,7 +85,7 @@ class TaskItem extends StatelessWidget {
     required this.edit,
     required this.remove,
   });
-  final TaskModel task;
+  final GetTaskModel task;
   final ToDoCubit cubit;
   final VoidCallback edit;
   final VoidCallback remove;
@@ -105,7 +106,7 @@ class TaskItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  task.taskTitle,
+                  task.title,
                   style: GoogleFonts.adamina(
                     fontSize: 18,
                     color: Colors.cyan,
@@ -185,12 +186,12 @@ class TaskItem extends StatelessWidget {
                           TextButton(
                             onPressed: () {
                               if (formKey.currentState!.validate()) {
-                                NotificationService.showNotification(
-                                  date: cubit.selectedDate!,
-                                  title: task.taskTitle,
-                                  body: task.taskDecription,
-                                  id: task.id!,
-                                );
+                                // NotificationService.showNotification(
+                                //   date: cubit.selectedDate!,
+                                //   title: task.title,
+                                //   body: task.description,
+                                //   id: task.id!,
+                                // );
                                 Navigator.pop(context);
                               }
                             },
@@ -229,7 +230,7 @@ class TaskItem extends StatelessWidget {
             // SizedBox(height: 5),
             CustomDivider(),
             Text(
-              task.taskDecription,
+              task.description,
               style: GoogleFonts.adamina(
                 fontSize: 16,
               ),

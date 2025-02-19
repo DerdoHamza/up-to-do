@@ -45,6 +45,15 @@ class ToDoForgetPasswordErrorState extends ToDoStates {
   ToDoForgetPasswordErrorState(this.error);
 }
 
+class ToDoGetAllTaskLoadingState extends ToDoStates {}
+
+class ToDoGetAllTaskSuccessState extends ToDoStates {}
+
+class ToDoGetAllTaskErrorState extends ToDoStates {
+  final String error;
+  ToDoGetAllTaskErrorState(this.error);
+}
+
 class ToDoAddTaskLoadingState extends ToDoStates {}
 
 class ToDoAddTaskSuccessState extends ToDoStates {}
@@ -56,16 +65,12 @@ class ToDoAddTaskErrorState extends ToDoStates {
 
 class ToDoEditTaskLoadingState extends ToDoStates {}
 
-class ToDoEditTaskSuccessState extends ToDoStates {}
-
 class ToDoEditTaskErrorState extends ToDoStates {
   final String error;
   ToDoEditTaskErrorState(this.error);
 }
 
 class ToDoDeleteTaskLoadingState extends ToDoStates {}
-
-class ToDoDeleteTaskSuccessState extends ToDoStates {}
 
 class ToDoDeleteTaskErrorState extends ToDoStates {
   final String error;

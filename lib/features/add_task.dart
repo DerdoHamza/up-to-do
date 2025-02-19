@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:up_to_do/models/task_model.dart';
 import 'package:up_to_do/services/component.dart';
+import 'package:up_to_do/services/constant.dart';
 import 'package:up_to_do/services/cubit/to_do_cubit.dart';
 import 'package:up_to_do/services/cubit/to_do_states.dart';
 
@@ -14,7 +15,11 @@ class AddTask extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ToDoCubit, ToDoStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is ToDoGetAllTaskSuccessState) {
+          Navigator.pop(context);
+        }
+      },
       builder: (context, state) {
         var cubit = ToDoCubit.get(context);
         return Scaffold(
@@ -47,12 +52,12 @@ class AddTask extends StatelessWidget {
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
                         TaskModel data = TaskModel(
-                          id: cubit.allTasks.length,
-                          taskTitle: title.text,
-                          taskDecription: description.text,
+                          title: title.text,
+                          description: description.text,
+                          addedBy: userId!,
+                          userId: userId!,
                         );
                         cubit.addTask(data: data);
-                        Navigator.pop(context);
                       }
                     },
                     child: Text('Add Task'),

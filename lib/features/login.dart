@@ -33,10 +33,12 @@ class Login extends StatelessWidget {
             CacheHelper.saveCacheData(
               key: 'userId',
               value: state.userId,
-            );
-            if (context.mounted) {
-              navigateAndReplace(context: context, screen: Home());
-            }
+            ).then((value) {
+              if (context.mounted) {
+                ToDoCubit.get(context).getAllTasks();
+                navigateAndReplace(context: context, screen: Home());
+              }
+            });
           });
         }
       },

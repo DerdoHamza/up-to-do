@@ -1,4 +1,5 @@
-class TaskModel {
+class GetTaskModel {
+  late int id;
   late String title;
   late String description;
   String scheduledNotification = '';
@@ -10,13 +11,9 @@ class TaskModel {
   String dateUpdated = '';
   late String userId;
   String teamId = '';
-  TaskModel({
-    required this.title,
-    required this.description,
-    required this.userId,
-    required this.addedBy,
-  });
-  TaskModel.fromJson(Map<String, dynamic> json) {
+
+  GetTaskModel.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     title = json['title'];
     description = json['description'];
     scheduledNotification = json['scheduledNotification'];
@@ -30,6 +27,7 @@ class TaskModel {
     teamId = json['teamId'];
   }
   Map<String, dynamic> toMap() => {
+        'id': id,
         'title': title,
         'description': description,
         'scheduledNotification': scheduledNotification,

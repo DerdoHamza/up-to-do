@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:up_to_do/models/get_task_model.dart';
 import 'package:up_to_do/models/task_model.dart';
 import 'package:up_to_do/models/user_model.dart';
+import 'package:up_to_do/services/constant.dart';
 import 'package:up_to_do/services/cubit/to_do_states.dart';
 
 class ToDoCubit extends Cubit<ToDoStates> {
@@ -74,34 +78,86 @@ class ToDoCubit extends Cubit<ToDoStates> {
   }
 
   // Tasks Crud
-  List<TaskModel> allTasks = [];
+  List<GetTaskModel> allTasks = [];
+  void getAllTasks() {
+    allTasks = [];
+    emit(ToDoGetAllTaskLoadingState());
+    Supabase.instance.client
+        .from('tasks')
+        .select('*')
+        .eq('userId', userId!)
+        .eq('active', true)
+        .then((value) {
+      for (var element in value) {
+        allTasks.add(GetTaskModel.fromJson(element));
+      }
+      emit(ToDoGetAllTaskSuccessState());
+    }).catchError((error) {
+      emit(ToDoGetAllTaskErrorState(error.toString()));
+    });
+  }
+
   void addTask({
     required TaskModel data,
   }) {
     emit(ToDoAddTaskLoadingState());
-    allTasks.add(data);
-    emit(ToDoAddTaskSuccessState());
+    Supabase.instance.client
+        .from('tasks')
+        .insert(
+          data.toMap(),
+        )
+        .then((value) {
+      getAllTasks();
+    }).catchError((error) {
+      log(error.toString());
+      emit(ToDoAddTaskErrorState(error.toString()));
+    });
   }
 
   void editTask({
-    required TaskModel data,
+    required String title,
+    required String description,
+    required int id,
   }) {
     emit(ToDoEditTaskLoadingState());
-    for (var element in allTasks) {
-      if (element.id == data.id) {
-        element.taskTitle = data.taskTitle;
-        element.taskDecription = data.taskDecription;
-      }
-    }
-    emit(ToDoEditTaskSuccessState());
+    Supabase.instance.client
+        .from('tasks')
+        .update({
+          'title': title,
+          'description': description,
+          'dateUpdated': DateTime.now().toIso8601String(),
+          'updatedBy': userId,
+        })
+        .eq('id', id)
+        .then((value) {
+          getAllTasks();
+        })
+        .catchError((error) {
+          emit(ToDoEditTaskErrorState(error.toString()));
+        });
   }
 
   void deleteTask({
-    required TaskModel data,
+    required GetTaskModel data,
   }) {
     emit(ToDoDeleteTaskLoadingState());
-    allTasks = allTasks.where((element) => element.id != data.id).toList();
-    emit(ToDoDeleteTaskSuccessState());
+    Supabase.instance.client
+        .from('tasks')
+        .update({
+          'active': false,
+          'dateUpdated': DateTime.now().toIso8601String(),
+          'updatedBy': userId,
+        })
+        .eq(
+          'id',
+          data.id,
+        )
+        .then((value) {
+          getAllTasks();
+        })
+        .catchError((error) {
+          emit(ToDoDeleteTaskErrorState(error.toString()));
+        });
   }
 
   DateTime? selectedDate;
