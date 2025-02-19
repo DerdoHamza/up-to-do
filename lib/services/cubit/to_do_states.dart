@@ -77,4 +77,13 @@ class ToDoDeleteTaskErrorState extends ToDoStates {
   ToDoDeleteTaskErrorState(this.error);
 }
 
+class ToDoUpdateScheduledLoadingState extends ToDoStates {}
+
+class ToDoUpdateScheduledSuccessState extends ToDoStates {}
+
+class ToDoUpdateScheduledErrorState extends ToDoStates {
+  final String error;
+  ToDoUpdateScheduledErrorState(this.error);
+}
+
 class ToDoTaskDateState extends ToDoStates {}

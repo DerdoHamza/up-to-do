@@ -77,7 +77,6 @@ class ToDoCubit extends Cubit<ToDoStates> {
     });
   }
 
-  // Tasks Crud
   List<GetTaskModel> allTasks = [];
   void getAllTasks() {
     allTasks = [];
@@ -166,5 +165,26 @@ class ToDoCubit extends Cubit<ToDoStates> {
   }) {
     selectedDate = date;
     emit(ToDoTaskDateState());
+  }
+
+  void updateScheduled({
+    required int id,
+  }) {
+    emit(ToDoUpdateScheduledLoadingState());
+    Supabase.instance.client
+        .from('tasks')
+        .update({
+          'scheduledNotification': selectedDate!.toIso8601String(),
+          'updatedBy': userId,
+          'dateUpdated': DateTime.now().toIso8601String(),
+        })
+        .eq('id', id)
+        .then((value) {
+          getAllTasks();
+          emit(ToDoUpdateScheduledSuccessState());
+        })
+        .catchError((error) {
+          ToDoUpdateScheduledErrorState(error.toString());
+        });
   }
 }
