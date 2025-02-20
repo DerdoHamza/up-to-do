@@ -1,6 +1,10 @@
 import 'dart:developer';
+import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:path/path.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:up_to_do/models/get_task_model.dart';
 import 'package:up_to_do/models/task_model.dart';
@@ -108,7 +112,6 @@ class ToDoCubit extends Cubit<ToDoStates> {
         .then((value) {
       getAllTasks();
     }).catchError((error) {
-      log(error.toString());
       emit(ToDoAddTaskErrorState(error.toString()));
     });
   }
@@ -186,5 +189,41 @@ class ToDoCubit extends Cubit<ToDoStates> {
         .catchError((error) {
           ToDoUpdateScheduledErrorState(error.toString());
         });
+  }
+
+  File? result;
+  void picFile() {
+    emit(ToDoPicFileLoadingState());
+    FilePicker.platform.pickFiles(
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: [
+        'jpg',
+        'pdf',
+        'doc',
+        'jpeg',
+        'mp4',
+        'avi',
+        '3gp',
+        'mkv',
+      ],
+    ).then((value) {
+      result = File(value!.files.first.xFile.path);
+      log("====================");
+      log(Uri.file(result!.path).pathSegments.last);
+      log("=====================");
+      try {
+        Supabase.instance.client.storage.from('taskMedia').upload(
+              Uri.file(result!.path).pathSegments.last,
+              result!,
+            );
+      } on SocketException catch (e) {
+        log('error ${e.message}');
+      } catch (e) {
+        log(e.toString());
+      }
+    }).catchError((error) {
+      emit(ToDoPicFileErrorState(error.toString()));
+    });
   }
 }

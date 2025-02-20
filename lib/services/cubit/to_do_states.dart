@@ -86,4 +86,13 @@ class ToDoUpdateScheduledErrorState extends ToDoStates {
   ToDoUpdateScheduledErrorState(this.error);
 }
 
+class ToDoPicFileLoadingState extends ToDoStates {}
+
+class ToDoPicFileSuccessState extends ToDoStates {}
+
+class ToDoPicFileErrorState extends ToDoStates {
+  final String error;
+  ToDoPicFileErrorState(this.error);
+}
+
 class ToDoTaskDateState extends ToDoStates {}
