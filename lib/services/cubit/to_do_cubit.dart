@@ -1,9 +1,6 @@
-import 'dart:developer';
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:path/path.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:up_to_do/models/add_tasks_media_model.dart';
 import 'package:up_to_do/models/get_task_model.dart';
@@ -239,17 +236,14 @@ class ToDoCubit extends Cubit<ToDoStates> {
               .then((value) {
             getTasksMedia(id: id);
           }).catchError((error) {
-            log('1 ${error.toSting()}');
-            emit(ToDoPicFileErrorState(error.toString()));
+            emit(ToDoPicFileErrorState(error.message.toString()));
           });
         }).catchError((error) {
-          log('2 ${error.toSting()}');
-          emit(ToDoPicFileErrorState(error.toString()));
+          emit(ToDoPicFileErrorState(error.message.toString()));
         });
       }
     }).catchError((error) {
-      log('3 ${error.toSting()}');
-      emit(ToDoPicFileErrorState(error.toString()));
+      emit(ToDoPicFileErrorState(error.message.toString()));
     });
   }
 

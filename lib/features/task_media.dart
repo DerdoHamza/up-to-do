@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:up_to_do/services/component.dart';
 import 'package:up_to_do/services/cubit/to_do_cubit.dart';
 import 'package:up_to_do/services/cubit/to_do_states.dart';
 
@@ -13,7 +14,14 @@ class TaskMedia extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ToDoCubit, ToDoStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is ToDoPicFileErrorState) {
+          showToast(
+            msg: state.error,
+            backgroundColor: Colors.red,
+          );
+        }
+      },
       builder: (context, state) {
         var cubit = ToDoCubit.get(context);
         return Scaffold(
