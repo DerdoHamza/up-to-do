@@ -22,13 +22,28 @@ class TaskMedia extends StatelessWidget {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              cubit.picFile();
+              cubit.picFile(id: id);
             },
             child: Icon(Icons.add),
           ),
-          body: Column(
-            children: [],
-          ),
+          body: state is ToDoPicFileLoadingState
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Center(
+                  child: Column(
+                    mainAxisAlignment: cubit.tasksMedia.isEmpty
+                        ? MainAxisAlignment.center
+                        : MainAxisAlignment.start,
+                    children: [
+                      cubit.tasksMedia.isEmpty
+                          ? Text('No Tasks Media')
+                          : Container(
+                              child: Text(cubit.tasksMedia[0].fileName),
+                            ),
+                    ],
+                  ),
+                ),
         );
       },
     );

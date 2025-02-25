@@ -42,7 +42,7 @@ class NotificationService {
           title: title,
           body: body,
           wakeUpScreen: true,
-          category: NotificationCategory.Reminder,
+          category: NotificationCategory.Alarm,
           notificationLayout: NotificationLayout.BigText,
           autoDismissible: false,
         ),

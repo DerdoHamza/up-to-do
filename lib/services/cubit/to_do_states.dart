@@ -96,3 +96,12 @@ class ToDoPicFileErrorState extends ToDoStates {
 }
 
 class ToDoTaskDateState extends ToDoStates {}
+
+class ToDoGetTasksMediLoadingState extends ToDoStates {}
+
+class ToDoGetTasksMediSuccessState extends ToDoStates {}
+
+class ToDoGetTasksMediErrorState extends ToDoStates {
+  final String error;
+  ToDoGetTasksMediErrorState(this.error);
+}

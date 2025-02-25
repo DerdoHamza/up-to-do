@@ -1,12 +1,13 @@
 import 'dart:developer';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path/path.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:up_to_do/models/add_tasks_media_model.dart';
 import 'package:up_to_do/models/get_task_model.dart';
+import 'package:up_to_do/models/get_tasks_media_model.dart';
 import 'package:up_to_do/models/task_model.dart';
 import 'package:up_to_do/models/user_model.dart';
 import 'package:up_to_do/services/constant.dart';
@@ -191,8 +192,9 @@ class ToDoCubit extends Cubit<ToDoStates> {
         });
   }
 
-  File? result;
-  void picFile() {
+  void picFile({
+    required int id,
+  }) {
     emit(ToDoPicFileLoadingState());
     FilePicker.platform.pickFiles(
       allowMultiple: false,
@@ -208,22 +210,67 @@ class ToDoCubit extends Cubit<ToDoStates> {
         'mkv',
       ],
     ).then((value) {
-      result = File(value!.files.first.xFile.path);
-      log("====================");
-      log(Uri.file(result!.path).pathSegments.last);
-      log("=====================");
-      try {
-        Supabase.instance.client.storage.from('taskMedia').upload(
-              Uri.file(result!.path).pathSegments.last,
-              result!,
-            );
-      } on SocketException catch (e) {
-        log('error ${e.message}');
-      } catch (e) {
-        log(e.toString());
+      if (value != null) {
+        final file = File(value.files.first.path!);
+        final fileName = Uri.file(file.path).pathSegments.last;
+        Supabase.instance.client.storage
+            .from('taskMedia')
+            .upload(
+              fileName,
+              file,
+            )
+            .then((value) {
+          AddTasksMediaModel media = AddTasksMediaModel(
+            fileName: fileName,
+            taskId: id,
+            extension: fileName.split('.').last,
+            active: true,
+            dateAdded: DateTime.now().toIso8601String(),
+            addedBy: userId!,
+            dateUpdated: '',
+            updatedBy: userId!,
+            path: value,
+          );
+          Supabase.instance.client
+              .from('tasks_media')
+              .insert(
+                media.toMap(),
+              )
+              .then((value) {
+            getTasksMedia(id: id);
+          }).catchError((error) {
+            log('1 ${error.toSting()}');
+            emit(ToDoPicFileErrorState(error.toString()));
+          });
+        }).catchError((error) {
+          log('2 ${error.toSting()}');
+          emit(ToDoPicFileErrorState(error.toString()));
+        });
       }
     }).catchError((error) {
+      log('3 ${error.toSting()}');
       emit(ToDoPicFileErrorState(error.toString()));
+    });
+  }
+
+  List<GetTasksMediaModel> tasksMedia = [];
+  void getTasksMedia({
+    required int id,
+  }) {
+    tasksMedia = [];
+    emit(ToDoGetTasksMediLoadingState());
+    Supabase.instance.client
+        .from('tasks_media')
+        .select('*')
+        .eq('taskId', id)
+        .eq('active', true)
+        .then((value) {
+      for (var element in value) {
+        tasksMedia.add(GetTasksMediaModel.fromJson(element));
+      }
+      emit(ToDoGetTasksMediSuccessState());
+    }).catchError((error) {
+      emit(ToDoGetTasksMediErrorState(error.toString()));
     });
   }
 }
