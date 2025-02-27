@@ -17,7 +17,6 @@ class CoreHome extends StatelessWidget {
     return BlocConsumer<ToDoCubit, ToDoStates>(
       listener: (context, state) {},
       builder: (context, state) {
-        var cubit = ToDoCubit.get(context);
         return Scaffold(
           body: PersistentTabView(
             context,
@@ -53,10 +52,9 @@ class CoreHome extends StatelessWidget {
                 inactiveColorPrimary: CupertinoColors.systemGrey,
               ),
             ],
-            handleAndroidBackButtonPress: true, // Default is true.
-            resizeToAvoidBottomInset:
-                true, // This needs to be true if you want to move up the screen on a non-scrollable screen when keyboard appears. Default is true.
-            stateManagement: true, // Default is true.
+            handleAndroidBackButtonPress: true,
+            resizeToAvoidBottomInset: true,
+            stateManagement: true,
             hideNavigationBarWhenKeyboardAppears: true,
             popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
@@ -64,12 +62,10 @@ class CoreHome extends StatelessWidget {
             isVisible: true,
             animationSettings: const NavBarAnimationSettings(
               navBarItemAnimation: ItemAnimationSettings(
-                // Navigation Bar's items animation properties.
                 duration: Duration(milliseconds: 400),
                 curve: Curves.ease,
               ),
               screenTransitionAnimation: ScreenTransitionAnimationSettings(
-                // Screen transition animation on change of selected tab.
                 animateTabTransition: true,
                 duration: Duration(milliseconds: 200),
                 screenTransitionAnimationType:
@@ -87,7 +83,7 @@ class CoreHome extends StatelessWidget {
               bottom: 10,
               left: 10,
               right: 10,
-            ), // Choose the nav bar style with this property
+            ),
           ),
         );
       },
