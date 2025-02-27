@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:up_to_do/features/core_home.dart';
 import 'package:up_to_do/features/home.dart';
 import 'package:up_to_do/features/login.dart';
 import 'package:up_to_do/services/cache_helper.dart';
@@ -36,7 +37,7 @@ class _SplashState extends State<Splash> {
     Widget start;
     if (userId != null) {
       ToDoCubit.get(context).getAllTasks();
-      start = Home();
+      start = CoreHome();
     } else {
       start = Login();
     }

@@ -42,25 +42,27 @@ class Home extends StatelessWidget {
                 'Home Screen',
               ),
               centerTitle: true,
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    navigateTo(
-                      context: context,
-                      screen: AddTask(),
-                    );
-                  },
-                  icon: Icon(Icons.add_circle_outline),
-                ),
-                SizedBox(width: 5),
-              ],
+            ),
+            floatingActionButton: Padding(
+              padding:
+                  EdgeInsets.only(bottom: kBottomNavigationBarHeight * 1.25),
+              child: FloatingActionButton(
+                onPressed: () {
+                  navigateTo(
+                    context: context,
+                    screen: AddTask(),
+                  );
+                },
+                child: Icon(Icons.add),
+              ),
             ),
             body: cubit.allTasks.isEmpty
                 ? Center(
                     child: Text('No Tasks'),
                   )
                 : Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.only(
+                        left: 8, right: 8, top: 8, bottom: 150),
                     child: ListView.separated(
                       itemBuilder: (context, index) => TaskItem(
                         cubit: cubit,

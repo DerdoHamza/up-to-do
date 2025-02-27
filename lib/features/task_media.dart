@@ -51,11 +51,15 @@ class TaskMedia extends StatelessWidget {
           appBar: AppBar(
             title: Text('Media'),
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              cubit.picFile(id: id);
-            },
-            child: Icon(Icons.add),
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(
+                bottom: kBottomNavigationBarHeight * 1.25),
+            child: FloatingActionButton(
+              onPressed: () {
+                cubit.picFile(id: id);
+              },
+              child: Icon(Icons.add),
+            ),
           ),
           body: state is ToDoPicFileLoadingState ||
                   state is ToDoGetTasksMediLoadingState
@@ -64,7 +68,8 @@ class TaskMedia extends StatelessWidget {
                 )
               : Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.only(
+                        right: 8, left: 8, top: 8, bottom: 150),
                     child: Column(
                       mainAxisAlignment: cubit.tasksMedia.isEmpty
                           ? MainAxisAlignment.center

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:up_to_do/features/core_home.dart';
 import 'package:up_to_do/features/forget_password.dart';
-import 'package:up_to_do/features/home.dart';
 import 'package:up_to_do/features/sign_up.dart';
 import 'package:up_to_do/services/cache_helper.dart';
 import 'package:up_to_do/services/component.dart';
@@ -36,7 +36,7 @@ class Login extends StatelessWidget {
             ).then((value) {
               if (context.mounted) {
                 ToDoCubit.get(context).getAllTasks();
-                navigateAndReplace(context: context, screen: Home());
+                navigateAndReplace(context: context, screen: CoreHome());
               }
             });
           });
