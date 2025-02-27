@@ -116,6 +116,7 @@ class TaskItem extends StatelessWidget {
                 Spacer(),
                 IconButton(
                   onPressed: () {
+                    cubit.getTasksMedia(id: task.id);
                     navigateTo(
                       context: context,
                       screen: TaskMedia(id: task.id),

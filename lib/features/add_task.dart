@@ -17,6 +17,10 @@ class AddTask extends StatelessWidget {
     return BlocConsumer<ToDoCubit, ToDoStates>(
       listener: (context, state) {
         if (state is ToDoGetAllTaskSuccessState) {
+          showToast(
+            msg: 'Task added successfully',
+            backgroundColor: Colors.green,
+          );
           Navigator.pop(context);
         }
       },

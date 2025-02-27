@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -197,10 +198,11 @@ class ToDoCubit extends Cubit<ToDoStates> {
       allowMultiple: false,
       type: FileType.custom,
       allowedExtensions: [
+        'jpeg',
         'jpg',
+        'png',
         'pdf',
         'doc',
-        'jpeg',
         'mp4',
         'avi',
         '3gp',
@@ -209,7 +211,8 @@ class ToDoCubit extends Cubit<ToDoStates> {
     ).then((value) {
       if (value != null) {
         final file = File(value.files.first.path!);
-        final fileName = Uri.file(file.path).pathSegments.last;
+        final fileName = value.files.first.name;
+
         Supabase.instance.client.storage
             .from('taskMedia')
             .upload(
@@ -217,8 +220,11 @@ class ToDoCubit extends Cubit<ToDoStates> {
               file,
             )
             .then((value) {
+          final String url = Supabase.instance.client.storage
+              .from('taskMedia')
+              .getPublicUrl(fileName);
           AddTasksMediaModel media = AddTasksMediaModel(
-            fileName: fileName,
+            fileName: fileName.split('.').first,
             taskId: id,
             extension: fileName.split('.').last,
             active: true,
@@ -226,7 +232,7 @@ class ToDoCubit extends Cubit<ToDoStates> {
             addedBy: userId!,
             dateUpdated: '',
             updatedBy: userId!,
-            path: value,
+            path: url,
           );
           Supabase.instance.client
               .from('tasks_media')
@@ -235,15 +241,17 @@ class ToDoCubit extends Cubit<ToDoStates> {
               )
               .then((value) {
             getTasksMedia(id: id);
+            emit(ToDoPicFileSuccessState());
           }).catchError((error) {
-            emit(ToDoPicFileErrorState(error.message.toString()));
+            emit(ToDoPicFileErrorState(error.toString()));
           });
         }).catchError((error) {
-          emit(ToDoPicFileErrorState(error.message.toString()));
+          emit(ToDoPicFileErrorState(error.toString()));
         });
       }
     }).catchError((error) {
-      emit(ToDoPicFileErrorState(error.message.toString()));
+      log(error.toString());
+      emit(ToDoPicFileErrorState(error.toString()));
     });
   }
 
