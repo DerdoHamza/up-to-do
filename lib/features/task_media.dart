@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,6 +20,18 @@ class TaskMedia extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<ToDoCubit, ToDoStates>(
       listener: (context, state) {
+        if (state is ToDoDeleteMediaFileSuccessState) {
+          showToast(
+            msg: 'Task deleted successfully',
+            backgroundColor: Colors.green,
+          );
+        }
+        if (state is ToDoDeleteMediaFileErrorState) {
+          showToast(
+            msg: state.error,
+            backgroundColor: Colors.red,
+          );
+        }
         if (state is ToDoPicFileErrorState) {
           showToast(
             msg: state.error,
@@ -66,6 +76,8 @@ class TaskMedia extends StatelessWidget {
                                 child: ListView.separated(
                                   itemBuilder: (context, index) => MediaItem(
                                     media: cubit.tasksMedia[index],
+                                    cubit: cubit,
+                                    taskId: id,
                                   ),
                                   separatorBuilder: (context, index) =>
                                       SizedBox(height: 10),
@@ -86,8 +98,12 @@ class MediaItem extends StatelessWidget {
   const MediaItem({
     super.key,
     required this.media,
+    required this.cubit,
+    required this.taskId,
   });
   final GetTasksMediaModel media;
+  final ToDoCubit cubit;
+  final int taskId;
 
   @override
   Widget build(BuildContext context) {
@@ -140,6 +156,45 @@ class MediaItem extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                ],
+              ),
+              Divider(),
+              ['mp4', 'avi', 'mkv'].contains(media.extension)
+                  ? Container(
+                      height: 100,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: NetworkImage(media.snapshotUrl))),
+                    )
+                  : ['jpeg', 'jpg', 'png'].contains(media.extension)
+                      ? Container(
+                          height: 100,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: NetworkImage(media.path))),
+                        )
+                      : Container(),
+              if (['mp4', 'avi', 'mkv', 'jpeg', 'jpg', 'png']
+                  .contains(media.extension))
+                Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        cubit.deleteMediaFile(
+                          id: media.id,
+                          taskId: taskId,
+                        );
+                      },
+                      child: Text(
+                        'Remove',
+                        style: GoogleFonts.besley(
+                          color: Colors.red,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )),
                 ],
               ),
             ],

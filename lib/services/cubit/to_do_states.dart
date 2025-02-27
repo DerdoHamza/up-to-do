@@ -105,3 +105,12 @@ class ToDoGetTasksMediErrorState extends ToDoStates {
   final String error;
   ToDoGetTasksMediErrorState(this.error);
 }
+
+class ToDoDeleteMediaFileLoadingState extends ToDoStates {}
+
+class ToDoDeleteMediaFileSuccessState extends ToDoStates {}
+
+class ToDoDeleteMediaFileErrorState extends ToDoStates {
+  final String error;
+  ToDoDeleteMediaFileErrorState(this.error);
+}

@@ -9,6 +9,7 @@ class GetTasksMediaModel {
   late String dateUpdated;
   late String updatedBy;
   late String path;
+  late String snapshotUrl;
   GetTasksMediaModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     fileName = json['fileName'];
@@ -20,6 +21,7 @@ class GetTasksMediaModel {
     dateUpdated = json['dateUpdated'];
     updatedBy = json['updatedBy'];
     path = json['path'];
+    snapshotUrl = json['snapshot_url'];
   }
   Map<String, dynamic> toMap() => {
         'extension': extension,

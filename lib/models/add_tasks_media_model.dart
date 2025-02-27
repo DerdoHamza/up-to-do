@@ -8,6 +8,7 @@ class AddTasksMediaModel {
   late String dateUpdated;
   late String updatedBy;
   late String path;
+  String snapshotUrl;
   AddTasksMediaModel({
     required this.fileName,
     required this.taskId,
@@ -18,6 +19,7 @@ class AddTasksMediaModel {
     required this.dateUpdated,
     required this.updatedBy,
     required this.path,
+    this.snapshotUrl = '',
   });
   Map<String, dynamic> toMap() => {
         'fileName': fileName,
@@ -29,5 +31,6 @@ class AddTasksMediaModel {
         'dateUpdated': dateUpdated,
         'updatedBy': updatedBy,
         'path': path,
+        'snapshot_url': snapshotUrl,
       };
 }
