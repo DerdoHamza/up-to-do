@@ -31,22 +31,24 @@ void navigateAndReplace({
 class CustomTextFormField extends StatelessWidget {
   const CustomTextFormField({
     super.key,
-    required this.controller,
+    this.controller,
     required this.label,
     required this.prefix,
     required this.type,
     this.sufix,
     this.lines = 1,
     this.isvisible = false,
+    this.onChange,
   });
 
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String label;
   final Widget prefix;
   final TextInputType type;
   final int lines;
   final bool isvisible;
   final Widget? sufix;
+  final Function(String)? onChange;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +64,7 @@ class CustomTextFormField extends StatelessWidget {
       minLines: 1,
       maxLines: lines,
       obscureText: isvisible,
+      onChanged: onChange,
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),

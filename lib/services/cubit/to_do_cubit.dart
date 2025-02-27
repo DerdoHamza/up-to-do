@@ -84,8 +84,10 @@ class ToDoCubit extends Cubit<ToDoStates> {
   }
 
   List<GetTaskModel> allTasks = [];
+  List<GetTaskModel> searchTasks = [];
   void getAllTasks() {
     allTasks = [];
+    searchTasks = [];
     emit(ToDoGetAllTaskLoadingState());
     Supabase.instance.client
         .from('tasks')
@@ -95,11 +97,29 @@ class ToDoCubit extends Cubit<ToDoStates> {
         .then((value) {
       for (var element in value) {
         allTasks.add(GetTaskModel.fromJson(element));
+        searchTasks.add(GetTaskModel.fromJson(element));
       }
       emit(ToDoGetAllTaskSuccessState());
     }).catchError((error) {
       emit(ToDoGetAllTaskErrorState(error.toString()));
     });
+  }
+
+  void search({
+    required String text,
+  }) {
+    emit(ToDoSearchLoadingState());
+    if (text.isNotEmpty) {
+      searchTasks = allTasks.where((element) {
+        return (element.title
+            .toLowerCase()
+            .trim()
+            .contains(text.toLowerCase().trim()));
+      }).toList();
+    } else {
+      getAllTasks();
+    }
+    emit(ToDoSearchSuccessState());
   }
 
   void addTask({

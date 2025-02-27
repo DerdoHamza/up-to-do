@@ -54,6 +54,15 @@ class ToDoGetAllTaskErrorState extends ToDoStates {
   ToDoGetAllTaskErrorState(this.error);
 }
 
+class ToDoSearchLoadingState extends ToDoStates {}
+
+class ToDoSearchSuccessState extends ToDoStates {}
+
+class ToDoSearchErrorState extends ToDoStates {
+  final String error;
+  ToDoSearchErrorState(this.error);
+}
+
 class ToDoAddTaskLoadingState extends ToDoStates {}
 
 class ToDoAddTaskSuccessState extends ToDoStates {}
