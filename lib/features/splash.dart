@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:up_to_do/features/core_home.dart';
-import 'package:up_to_do/features/home.dart';
 import 'package:up_to_do/features/login.dart';
 import 'package:up_to_do/services/cache_helper.dart';
 import 'package:up_to_do/services/component.dart';
