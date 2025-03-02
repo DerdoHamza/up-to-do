@@ -10,7 +10,7 @@ class GetTaskModel {
   String dateAdded = DateTime.now().toIso8601String();
   String dateUpdated = '';
   late String userId;
-  String teamId = '';
+  int? teamId;
 
   GetTaskModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];

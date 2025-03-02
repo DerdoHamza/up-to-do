@@ -44,14 +44,20 @@ class _VideoPlayersState extends State<VideoPlayers> {
               )
             : Container(),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            controller.value.isPlaying ? controller.pause() : controller.play();
-          });
-        },
-        child: Icon(
-          controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+      floatingActionButton: Padding(
+        padding:
+            const EdgeInsets.only(bottom: kBottomNavigationBarHeight * 1.25),
+        child: FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              controller.value.isPlaying
+                  ? controller.pause()
+                  : controller.play();
+            });
+          },
+          child: Icon(
+            controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+          ),
         ),
       ),
     );

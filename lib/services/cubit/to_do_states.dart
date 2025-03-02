@@ -123,3 +123,93 @@ class ToDoDeleteMediaFileErrorState extends ToDoStates {
   final String error;
   ToDoDeleteMediaFileErrorState(this.error);
 }
+
+class ToDoCreatTeamLoadingState extends ToDoStates {}
+
+// class ToDoCreatTeamSuccessState extends ToDoStates {}
+
+class ToDoCreatTeamErrorState extends ToDoStates {
+  final String error;
+  ToDoCreatTeamErrorState(this.error);
+}
+
+class ToDoUpdateTeamLoadingState extends ToDoStates {}
+
+class ToDoUpdateTeamSuccessState extends ToDoStates {}
+
+class ToDoUpdateTeamErrorState extends ToDoStates {
+  final String error;
+  ToDoUpdateTeamErrorState(this.error);
+}
+
+class ToDoDeleteTeamLoadingState extends ToDoStates {}
+
+class ToDoDeleteTeamSuccessState extends ToDoStates {}
+
+class ToDoDeleteTeamErrorState extends ToDoStates {
+  final String error;
+  ToDoDeleteTeamErrorState(this.error);
+}
+
+class ToDoGetMyTeamLoadingState extends ToDoStates {}
+
+class ToDoGetMyTeamSuccessState extends ToDoStates {}
+
+class ToDoGetMyTeamErrorState extends ToDoStates {
+  final String error;
+  ToDoGetMyTeamErrorState(this.error);
+}
+
+class ToDoGetTeamLoadingState extends ToDoStates {}
+
+class ToDoGetTeamSuccessState extends ToDoStates {}
+
+class ToDoGetTeamErrorState extends ToDoStates {
+  final String error;
+  ToDoGetTeamErrorState(this.error);
+}
+
+class ToDoAddTaskToTeamLoadingState extends ToDoStates {}
+
+class ToDoAddTaskToTeamSuccessState extends ToDoStates {}
+
+class ToDoAddTaskToTeamErrorState extends ToDoStates {
+  final String error;
+  ToDoAddTaskToTeamErrorState(this.error);
+}
+
+class ToDoGetTeamTasksLoadingState extends ToDoStates {}
+
+class ToDoGetTeamTasksSuccessState extends ToDoStates {}
+
+class ToDoGetTeamTasksErrorState extends ToDoStates {
+  final String error;
+  ToDoGetTeamTasksErrorState(this.error);
+}
+
+class ToDoJoinTeamLoadingState extends ToDoStates {}
+
+class ToDoJoinTeamSuccessState extends ToDoStates {}
+
+class ToDoJoinTeamErrorState extends ToDoStates {
+  final String error;
+  ToDoJoinTeamErrorState(this.error);
+}
+
+class ToDoLeaveTeamLoadingState extends ToDoStates {}
+
+class ToDoLeaveTeamSuccessState extends ToDoStates {}
+
+class ToDoLeaveTeamErrorState extends ToDoStates {
+  final String error;
+  ToDoLeaveTeamErrorState(this.error);
+}
+
+class ToDoGetMyJoinedTeamLoadingState extends ToDoStates {}
+
+class ToDoGetMyJoinedTeamSuccessState extends ToDoStates {}
+
+class ToDoGetMyJoinedTeamErrorState extends ToDoStates {
+  final String error;
+  ToDoGetMyJoinedTeamErrorState(this.error);
+}

@@ -9,10 +9,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:up_to_do/models/add_tasks_media_model.dart';
 import 'package:up_to_do/models/get_task_model.dart';
 import 'package:up_to_do/models/get_tasks_media_model.dart';
+import 'package:up_to_do/models/get_team_model.dart';
 import 'package:up_to_do/models/task_model.dart';
 import 'package:up_to_do/models/user_model.dart';
 import 'package:up_to_do/services/constant.dart';
 import 'package:up_to_do/services/cubit/to_do_states.dart';
+
+import '../../models/add_team_model.dart';
 
 class ToDoCubit extends Cubit<ToDoStates> {
   ToDoCubit(super.initialState);
@@ -101,6 +104,7 @@ class ToDoCubit extends Cubit<ToDoStates> {
       }
       emit(ToDoGetAllTaskSuccessState());
     }).catchError((error) {
+      log(error.toString());
       emit(ToDoGetAllTaskErrorState(error.toString()));
     });
   }
@@ -369,5 +373,205 @@ class ToDoCubit extends Cubit<ToDoStates> {
         .catchError((error) {
           emit(ToDoDeleteMediaFileErrorState(error.toString()));
         });
+  }
+
+// Teams
+  void createTeam({
+    required AddTeamModel team,
+  }) {
+    emit(ToDoCreatTeamLoadingState());
+    Supabase.instance.client.from('teams').insert(team.toMap()).then((value) {
+      getMyTeam();
+      getMyJoinedTeam();
+    }).catchError((error) {
+      emit(ToDoCreatTeamErrorState(error.toString()));
+    });
+  }
+
+  void updateTeam({
+    required int teamId,
+  }) {
+    emit(ToDoUpdateTeamLoadingState());
+    Supabase.instance.client
+        .from('teams')
+        .update({
+          'dateUpdated': DateTime.now().toIso8601String(),
+          'UpdatedBy': userId,
+        })
+        .eq('id', teamId)
+        .eq('active', true)
+        .then((value) {
+          emit(ToDoUpdateTeamSuccessState());
+        })
+        .catchError((error) {
+          emit(ToDoUpdateTeamErrorState(error.toString()));
+        });
+  }
+
+  void removeTeam({
+    required int teamId,
+  }) {
+    emit(ToDoDeleteTeamLoadingState());
+    Supabase.instance.client
+        .from('teams')
+        .update(
+          {
+            'active': false,
+            'dateUpdated': DateTime.now().toIso8601String(),
+            'UpdatedBy': userId,
+          },
+        )
+        .eq('id', teamId)
+        .then((value) {
+          emit(ToDoDeleteTeamSuccessState());
+        })
+        .catchError((error) {
+          emit(ToDoDeleteTeamErrorState(error.toString()));
+        });
+  }
+
+  List<GetTeamModel> myTeam = [];
+  void getMyTeam() {
+    emit(ToDoGetMyTeamLoadingState());
+    Supabase.instance.client
+        .from('teams')
+        .select('*')
+        .eq('leaderId', userId!)
+        .eq('active', true)
+        .then((value) {
+      for (var element in value) {
+        myTeam.add(GetTeamModel.fromJson(element));
+      }
+
+      emit(ToDoGetMyTeamSuccessState());
+    }).catchError((error) {
+      emit(ToDoGetMyTeamErrorState(error.toString()));
+    });
+  }
+
+  GetTeamModel? team;
+  void getTeam({
+    required int teamId,
+  }) {
+    emit(ToDoGetTeamLoadingState());
+    Supabase.instance.client
+        .from('teams')
+        .select('*')
+        .eq('id', teamId)
+        .eq('leaderId', userId!)
+        .eq('active', true)
+        .then((value) {
+      team = GetTeamModel.fromJson(value.first);
+      emit(ToDoGetTeamSuccessState());
+    }).catchError((error) {
+      emit(ToDoGetTeamErrorState(error.toString()));
+    });
+  }
+
+  void addTaskToTeam({
+    required int teamId,
+    required TaskModel task,
+  }) {
+    emit(ToDoAddTaskToTeamLoadingState());
+    Supabase.instance.client.from('tasks').insert(task.toMap()).then((value) {
+      emit(ToDoAddTaskToTeamSuccessState());
+    }).catchError((error) {
+      emit(ToDoAddTaskToTeamErrorState(error.toString()));
+    });
+  }
+
+  void getTeamTasks({
+    required int teamId,
+  }) {
+    emit(ToDoGetTeamTasksLoadingState());
+    Supabase.instance.client
+        .from('tasks')
+        .select('*')
+        .eq('teamId', teamId)
+        .eq('active', true)
+        .then((value) {
+      emit(ToDoGetTeamTasksSuccessState());
+    }).catchError((error) {
+      emit(ToDoGetTeamTasksErrorState(error.toString()));
+    });
+  }
+
+  void joinTeam({
+    required int teamId,
+  }) {
+    emit(ToDoJoinTeamLoadingState());
+    Supabase.instance.client
+        .from('users_teams')
+        .select()
+        .eq('userId', userId!)
+        .eq('teamId', teamId)
+        .then((value) {
+      if (value.isEmpty) {
+        Supabase.instance.client.from('users_teams').insert({
+          'userId': userId,
+          'teamId': teamId,
+        });
+        emit(ToDoJoinTeamSuccessState());
+      } else {
+        emit(ToDoJoinTeamErrorState('you already joined this team !'));
+      }
+    }).catchError((error) {
+      emit(ToDoJoinTeamErrorState(error.toString()));
+    });
+  }
+
+  void leaveTeam({
+    required int teamId,
+  }) {
+    emit(ToDoLeaveTeamLoadingState());
+    Supabase.instance.client
+        .from('users_teams')
+        .select()
+        .eq('userId', userId!)
+        .eq('teamId', teamId)
+        .then((value) {
+      if (value.isNotEmpty) {
+        Supabase.instance.client
+            .from('users_teams')
+            .delete()
+            .eq('userId', userId!)
+            .eq('teamId', teamId)
+            .then((value) {
+          emit(ToDoLeaveTeamSuccessState());
+        }).catchError((error) {
+          emit(ToDoLeaveTeamErrorState(error.toString()));
+        });
+      }
+    });
+  }
+
+  List<int> teamIds = [];
+  List<GetTaskModel> myJoinedTeam = [];
+  void getMyJoinedTeam() {
+    emit(ToDoGetMyJoinedTeamLoadingState());
+    Supabase.instance.client
+        .from('users_teams')
+        .select('*')
+        .eq('userId', userId!)
+        .then((value) {
+      for (var element in value) {
+        teamIds.add(element['teamId']);
+      }
+      Supabase.instance.client
+          .from('teams')
+          .select('*')
+          .inFilter('id', teamIds)
+          .eq('active', true)
+          .then((value) {
+        for (var element in value) {
+          myJoinedTeam.add(GetTaskModel.fromJson(element));
+        }
+        emit(ToDoGetMyJoinedTeamSuccessState());
+      }).catchError((error) {
+        emit(ToDoGetMyJoinedTeamErrorState(error.toString()));
+      });
+    }).catchError((error) {
+      emit(ToDoGetMyJoinedTeamErrorState(error.toString()));
+    });
   }
 }
