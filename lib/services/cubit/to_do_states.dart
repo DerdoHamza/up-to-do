@@ -151,13 +151,13 @@ class ToDoDeleteTeamErrorState extends ToDoStates {
   ToDoDeleteTeamErrorState(this.error);
 }
 
-class ToDoGetMyTeamLoadingState extends ToDoStates {}
+class ToDoGetMyTeamsLoadingState extends ToDoStates {}
 
-class ToDoGetMyTeamSuccessState extends ToDoStates {}
+class ToDoGetMyTeamsSuccessState extends ToDoStates {}
 
-class ToDoGetMyTeamErrorState extends ToDoStates {
+class ToDoGetMyTeamsErrorState extends ToDoStates {
   final String error;
-  ToDoGetMyTeamErrorState(this.error);
+  ToDoGetMyTeamsErrorState(this.error);
 }
 
 class ToDoGetTeamLoadingState extends ToDoStates {}

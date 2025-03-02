@@ -49,13 +49,13 @@ class Teams extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Text(cubit.myTeam[index].title),
+                        Text(cubit.myTeams[index].title),
                       ],
                     ),
                     SizedBox(height: 5),
                     Row(
                       children: [
-                        Text(cubit.myTeam[index].description),
+                        Text(cubit.myTeams[index].description),
                       ],
                     ),
                     Divider(),
@@ -80,7 +80,7 @@ class Teams extends StatelessWidget {
                 ),
               ),
               separatorBuilder: (context, index) => SizedBox(height: 10),
-              itemCount: cubit.myTeam.length,
+              itemCount: cubit.myTeams.length,
             ),
           ),
         );

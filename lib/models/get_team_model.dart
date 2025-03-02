@@ -21,4 +21,16 @@ class GetTeamModel {
     addedBy = json['addedBy'];
     updatedBy = json['updatedBy'];
   }
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'title': title,
+        'description': description,
+        'leaderId': leaderId,
+        'active': active,
+        'archived': archived,
+        'dateAdded': dateAdded,
+        'dateUpdated': dateUpdated,
+        'addedBy': addedBy,
+        'updatedBy': updatedBy,
+      };
 }

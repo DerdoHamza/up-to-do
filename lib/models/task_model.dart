@@ -9,7 +9,7 @@ class TaskModel {
   String dateAdded = DateTime.now().toIso8601String();
   String dateUpdated = '';
   late String userId;
-  String teamId = '';
+  int? teamId;
   TaskModel({
     required this.title,
     required this.description,
