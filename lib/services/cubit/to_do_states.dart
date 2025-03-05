@@ -135,7 +135,7 @@ class ToDoCreatTeamErrorState extends ToDoStates {
 
 class ToDoUpdateTeamLoadingState extends ToDoStates {}
 
-class ToDoUpdateTeamSuccessState extends ToDoStates {}
+// class ToDoUpdateTeamSuccessState extends ToDoStates {}
 
 class ToDoUpdateTeamErrorState extends ToDoStates {
   final String error;
@@ -144,7 +144,7 @@ class ToDoUpdateTeamErrorState extends ToDoStates {
 
 class ToDoDeleteTeamLoadingState extends ToDoStates {}
 
-class ToDoDeleteTeamSuccessState extends ToDoStates {}
+// class ToDoDeleteTeamSuccessState extends ToDoStates {}
 
 class ToDoDeleteTeamErrorState extends ToDoStates {
   final String error;

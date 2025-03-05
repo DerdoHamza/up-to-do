@@ -375,13 +375,19 @@ class ToDoCubit extends Cubit<ToDoStates> {
         });
   }
 
+  List<GetTeamModel> teams = [];
   void createTeam({
     required AddTeamModel team,
   }) {
+    teams = [];
     emit(ToDoCreatTeamLoadingState());
     Supabase.instance.client.from('teams').insert(team.toMap()).then((value) {
       getMyTeams();
       getMyJoinedTeam();
+      teams = [
+        ...myTeams,
+        ...myJoinedTeam,
+      ];
     }).catchError((error) {
       emit(ToDoCreatTeamErrorState(error.toString()));
     });
@@ -389,6 +395,7 @@ class ToDoCubit extends Cubit<ToDoStates> {
 
   List<GetTeamModel> myTeams = [];
   void getMyTeams() {
+    myTeams = [];
     emit(ToDoGetMyTeamsLoadingState());
     Supabase.instance.client
         .from('teams')
@@ -418,7 +425,9 @@ class ToDoCubit extends Cubit<ToDoStates> {
         .eq('id', teamId)
         .eq('active', true)
         .then((value) {
-      emit(ToDoUpdateTeamSuccessState());
+      getMyTeams();
+      getMyJoinedTeam();
+      // emit(ToDoUpdateTeamSuccessState());
     }).catchError((error) {
       emit(ToDoUpdateTeamErrorState(error.toString()));
     });
@@ -434,14 +443,17 @@ class ToDoCubit extends Cubit<ToDoStates> {
           {
             'active': false,
             'dateUpdated': DateTime.now().toIso8601String(),
-            'UpdatedBy': userId,
+            'updatedBy': userId,
           },
         )
         .eq('id', teamId)
         .then((value) {
-          emit(ToDoDeleteTeamSuccessState());
+          getMyTeams();
+          getMyJoinedTeam();
+          // emit(ToDoDeleteTeamSuccessState());
         })
         .catchError((error) {
+          log(error.toString());
           emit(ToDoDeleteTeamErrorState(error.toString()));
         });
   }
@@ -466,6 +478,8 @@ class ToDoCubit extends Cubit<ToDoStates> {
   List<int> teamIds = [];
   List<GetTeamModel> myJoinedTeam = [];
   void getMyJoinedTeam() {
+    teamIds = [];
+    myJoinedTeam = [];
     emit(ToDoGetMyJoinedTeamLoadingState());
     Supabase.instance.client
         .from('users_teams')

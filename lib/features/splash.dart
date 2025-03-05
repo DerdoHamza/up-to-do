@@ -36,6 +36,8 @@ class _SplashState extends State<Splash> {
     Widget start;
     if (userId != null) {
       ToDoCubit.get(context).getAllTasks();
+      ToDoCubit.get(context).getMyTeams();
+      ToDoCubit.get(context).getMyJoinedTeam();
       start = CoreHome();
     } else {
       start = Login();
