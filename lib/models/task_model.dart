@@ -15,6 +15,7 @@ class TaskModel {
     required this.description,
     required this.userId,
     required this.addedBy,
+    this.teamId,
   });
   TaskModel.fromJson(Map<String, dynamic> json) {
     title = json['title'];

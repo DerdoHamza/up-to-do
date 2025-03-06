@@ -21,12 +21,19 @@ class EditTeam extends StatelessWidget {
     return BlocConsumer<ToDoCubit, ToDoStates>(
       listener: (context, state) {
         if (state is ToDoGetMyJoinedTeamSuccessState) {
-          Navigator.pop(context);
+          showToast(
+                  msg: 'Team edited successfully',
+                  backgroundColor: Colors.green)
+              .then((value) {
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
+          });
         }
       },
       builder: (context, state) {
         titleController.text = team.title;
-        descriptionController.text = team.title;
+        descriptionController.text = team.description;
         var cubit = ToDoCubit.get(context);
         return Scaffold(
           appBar: AppBar(

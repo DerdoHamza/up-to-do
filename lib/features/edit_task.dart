@@ -10,9 +10,11 @@ class EditTask extends StatelessWidget {
   final TextEditingController description = TextEditingController();
   final formKey = GlobalKey<FormState>();
   final GetTaskModel task;
+  final int? teamId;
   EditTask({
     super.key,
     required this.task,
+    this.teamId,
   });
 
   @override
@@ -57,9 +59,11 @@ class EditTask extends StatelessWidget {
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
                         cubit.editTask(
-                            title: title.text,
-                            description: description.text,
-                            id: task.id);
+                          title: title.text,
+                          description: description.text,
+                          id: task.id,
+                          teamId: teamId,
+                        );
                       }
                     },
                     child: Text('Edit Task'),

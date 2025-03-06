@@ -17,6 +17,7 @@ class CoreHome extends StatelessWidget {
     return BlocConsumer<ToDoCubit, ToDoStates>(
       listener: (context, state) {},
       builder: (context, state) {
+        var cubit = ToDoCubit.get(context);
         return Scaffold(
           body: PersistentTabView(
             context,
@@ -59,7 +60,7 @@ class CoreHome extends StatelessWidget {
             popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
             backgroundColor: Colors.grey.shade900,
-            isVisible: true,
+            isVisible: cubit.isVisible,
             animationSettings: const NavBarAnimationSettings(
               navBarItemAnimation: ItemAnimationSettings(
                 duration: Duration(milliseconds: 400),

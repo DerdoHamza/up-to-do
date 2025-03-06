@@ -213,3 +213,5 @@ class ToDoGetMyJoinedTeamErrorState extends ToDoStates {
   final String error;
   ToDoGetMyJoinedTeamErrorState(this.error);
 }
+
+class ToDoNavBarVisibilityState extends ToDoStates {}

@@ -97,6 +97,7 @@ class ToDoCubit extends Cubit<ToDoStates> {
         .select('*')
         .eq('userId', userId!)
         .eq('active', true)
+        .isFilter('teamId', null)
         .then((value) {
       for (var element in value) {
         allTasks.add(GetTaskModel.fromJson(element));
@@ -146,6 +147,7 @@ class ToDoCubit extends Cubit<ToDoStates> {
     required String title,
     required String description,
     required int id,
+    int? teamId,
   }) {
     emit(ToDoEditTaskLoadingState());
     Supabase.instance.client
@@ -158,6 +160,9 @@ class ToDoCubit extends Cubit<ToDoStates> {
         })
         .eq('id', id)
         .then((value) {
+          if (teamId != null) {
+            getTeamTasks(teamId: teamId);
+          }
           getAllTasks();
         })
         .catchError((error) {
@@ -417,8 +422,6 @@ class ToDoCubit extends Cubit<ToDoStates> {
     required GetTeamModel team,
   }) {
     emit(ToDoUpdateTeamLoadingState());
-    team.dateUpdated = DateTime.now().toIso8601String();
-    team.updatedBy = userId!;
     Supabase.instance.client
         .from('teams')
         .update(team.toMap())
@@ -525,6 +528,7 @@ class ToDoCubit extends Cubit<ToDoStates> {
     required int teamId,
   }) {
     emit(ToDoGetTeamTasksLoadingState());
+    teamTasks = [];
     Supabase.instance.client
         .from('tasks')
         .select('*')
@@ -589,5 +593,13 @@ class ToDoCubit extends Cubit<ToDoStates> {
     }).catchError((error) {
       emit(ToDoLeaveTeamErrorState('You are not a member of this team !'));
     });
+  }
+
+  bool isVisible = true;
+  void navBarVisibility({
+    required bool value,
+  }) {
+    isVisible = value;
+    emit(ToDoNavBarVisibilityState());
   }
 }

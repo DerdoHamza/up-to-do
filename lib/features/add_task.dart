@@ -10,13 +10,20 @@ class AddTask extends StatelessWidget {
   final TextEditingController title = TextEditingController();
   final TextEditingController description = TextEditingController();
   final formKey = GlobalKey<FormState>();
-  AddTask({super.key});
+  final int? teamId;
+  AddTask({
+    super.key,
+    this.teamId,
+  });
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ToDoCubit, ToDoStates>(
       listener: (context, state) {
         if (state is ToDoGetAllTaskSuccessState) {
+          if (teamId != null) {
+            ToDoCubit.get(context).getTeamTasks(teamId: teamId!);
+          }
           showToast(
             msg: 'Task added successfully',
             backgroundColor: Colors.green,
@@ -60,6 +67,7 @@ class AddTask extends StatelessWidget {
                           description: description.text,
                           addedBy: userId!,
                           userId: userId!,
+                          teamId: teamId,
                         );
                         cubit.addTask(data: data);
                       }

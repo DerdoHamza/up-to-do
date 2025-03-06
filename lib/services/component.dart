@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:up_to_do/features/task_media.dart';
 import 'package:up_to_do/models/get_task_model.dart';
+import 'package:up_to_do/services/constant.dart';
 import 'package:up_to_do/services/cubit/to_do_cubit.dart';
 import 'package:up_to_do/services/notification_service.dart';
 
@@ -127,119 +128,108 @@ class TaskItem extends StatelessWidget {
                   },
                   icon: Icon(Icons.video_library_outlined),
                 ),
-                IconButton(
-                  onPressed: () async {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text(
-                          'Choose a time for yor reminder',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
+                if (task.userId == userId)
+                  IconButton(
+                    onPressed: () async {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text(
+                            'Choose a time for yor reminder',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        content: Form(
-                          key: formKey,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              TextFormField(
-                                controller: dateController,
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Please select Date & Time';
-                                  }
-                                  return null;
-                                },
-                                readOnly: true,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  labelText: 'Date & Time',
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.all(10),
-                                ),
-                                onTap: () {
-                                  showDatePicker(
-                                    context: context,
-                                    firstDate: DateTime.now(),
-                                    lastDate: DateTime.now().add(
-                                      Duration(days: 365),
-                                    ),
-                                  ).then((valueDate) {
-                                    if (context.mounted) {
-                                      if (valueDate != null) {
-                                        showTimePicker(
-                                                context: context,
-                                                initialTime: TimeOfDay.now())
-                                            .then((valueTime) {
-                                          if (valueTime != null) {
-                                            valueDate = valueDate!.copyWith(
-                                              hour: valueTime.hour,
-                                              minute: valueTime.minute,
-                                            );
-                                            cubit.taskDate(date: valueDate!);
-                                            dateController.text =
-                                                valueDate.toString();
-                                          }
-                                        });
-                                      }
+                          content: Form(
+                            key: formKey,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextFormField(
+                                  controller: dateController,
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return 'Please select Date & Time';
                                     }
-                                  });
-                                },
-                              )
-                            ],
+                                    return null;
+                                  },
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    labelText: 'Date & Time',
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.all(10),
+                                  ),
+                                  onTap: () {
+                                    showDatePicker(
+                                      context: context,
+                                      firstDate: DateTime.now(),
+                                      lastDate: DateTime.now().add(
+                                        Duration(days: 365),
+                                      ),
+                                    ).then((valueDate) {
+                                      if (context.mounted) {
+                                        if (valueDate != null) {
+                                          showTimePicker(
+                                                  context: context,
+                                                  initialTime: TimeOfDay.now())
+                                              .then((valueTime) {
+                                            if (valueTime != null) {
+                                              valueDate = valueDate!.copyWith(
+                                                hour: valueTime.hour,
+                                                minute: valueTime.minute,
+                                              );
+                                              cubit.taskDate(date: valueDate!);
+                                              dateController.text =
+                                                  valueDate.toString();
+                                            }
+                                          });
+                                        }
+                                      }
+                                    });
+                                  },
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                        actionsAlignment: MainAxisAlignment.spaceBetween,
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              if (formKey.currentState!.validate()) {
-                                cubit.updateScheduled(
-                                  id: task.id,
-                                );
-                                NotificationService.showNotification(
-                                  date: cubit.selectedDate!,
-                                  title: task.title,
-                                  body: task.description,
-                                  id: task.id,
-                                );
+                          actionsAlignment: MainAxisAlignment.spaceBetween,
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                if (formKey.currentState!.validate()) {
+                                  cubit.updateScheduled(
+                                    id: task.id,
+                                  );
+                                  NotificationService.showNotification(
+                                    date: cubit.selectedDate!,
+                                    title: task.title,
+                                    body: task.description,
+                                    id: task.id,
+                                  );
+                                  Navigator.pop(context);
+                                }
+                              },
+                              child: Text('Schedule'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                cubit.taskDate();
                                 Navigator.pop(context);
-                              }
-                            },
-                            child: Text('Schedule'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              cubit.taskDate();
-                              Navigator.pop(context);
-                            },
-                            child: Text('Cancel'),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                  icon: Icon(Icons.alarm_add_outlined),
-                ),
+                              },
+                              child: Text('Cancel'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.alarm_add_outlined),
+                  ),
               ],
             ),
 
-            Row(
-              children: [
-                Icon(Icons.alarm_add_outlined),
-                SizedBox(width: 10),
-                Text(
-                  task.scheduledNotification,
-                  style: TextStyle(
-                    height: 0.4,
-                  ),
-                ),
-              ],
-            ),
             // SizedBox(height: 5),
             CustomDivider(),
             Text(
@@ -248,47 +238,48 @@ class TaskItem extends StatelessWidget {
                 fontSize: 16,
               ),
             ),
-            CustomDivider(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
-                    ),
-                    onPressed: edit,
-                    child: Text(
-                      'Edit',
-                      style: GoogleFonts.adamina(
-                        fontSize: 16,
-                        color: Colors.green,
+            if (task.userId == userId) CustomDivider(),
+            if (task.userId == userId)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
+                      onPressed: edit,
+                      child: Text(
+                        'Edit',
+                        style: GoogleFonts.adamina(
+                          fontSize: 16,
+                          color: Colors.green,
+                        ),
                       ),
                     ),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
-                    ),
-                    onPressed: remove,
-                    child: Text(
-                      'Remove',
-                      style: GoogleFonts.adamina(
-                        fontSize: 16,
-                        color: Colors.red,
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
+                      onPressed: remove,
+                      child: Text(
+                        'Remove',
+                        style: GoogleFonts.adamina(
+                          fontSize: 16,
+                          color: Colors.red,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),
