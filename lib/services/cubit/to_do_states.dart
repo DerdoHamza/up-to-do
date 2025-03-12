@@ -27,15 +27,6 @@ class ToDoLogInErrorState extends ToDoStates {
   ToDoLogInErrorState(this.error);
 }
 
-class ToDoSignOutLoadingState extends ToDoStates {}
-
-class ToDoSignOutSuccessState extends ToDoStates {}
-
-class ToDoSignOutErrorState extends ToDoStates {
-  final String error;
-  ToDoSignOutErrorState(this.error);
-}
-
 class ToDoForgetPasswordLoadingState extends ToDoStates {}
 
 class ToDoForgetPasswordSuccessState extends ToDoStates {}
@@ -160,6 +151,15 @@ class ToDoGetMyTeamsErrorState extends ToDoStates {
   ToDoGetMyTeamsErrorState(this.error);
 }
 
+class ToDoGetAllMyTeamsLoadingState extends ToDoStates {}
+
+class ToDoGetAllMyTeamsSuccessState extends ToDoStates {}
+
+class ToDoGetAllMyTeamsErrorState extends ToDoStates {
+  final String error;
+  ToDoGetAllMyTeamsErrorState(this.error);
+}
+
 class ToDoGetTeamLoadingState extends ToDoStates {}
 
 class ToDoGetTeamSuccessState extends ToDoStates {}
@@ -205,13 +205,27 @@ class ToDoLeaveTeamErrorState extends ToDoStates {
   ToDoLeaveTeamErrorState(this.error);
 }
 
+class ToDoLogOutState extends ToDoStates {}
+
 class ToDoGetMyJoinedTeamLoadingState extends ToDoStates {}
 
-class ToDoGetMyJoinedTeamSuccessState extends ToDoStates {}
+class ToDoGetMyJoinedTeamSuccessState extends ToDoStates {
+  final String? msg;
+  ToDoGetMyJoinedTeamSuccessState(this.msg);
+}
 
 class ToDoGetMyJoinedTeamErrorState extends ToDoStates {
   final String error;
   ToDoGetMyJoinedTeamErrorState(this.error);
 }
 
-class ToDoNavBarVisibilityState extends ToDoStates {}
+class ToDoGetAllTeamsLoadingState extends ToDoStates {}
+
+class ToDoGetAllTeamsSuccessState extends ToDoStates {}
+
+class ToDoGetAllTeamsErrorState extends ToDoStates {
+  final String error;
+  ToDoGetAllTeamsErrorState(this.error);
+}
+
+class ToDoChangeBottomNavBarIndexState extends ToDoStates {}

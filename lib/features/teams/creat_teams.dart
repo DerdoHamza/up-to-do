@@ -17,9 +17,11 @@ class CreatTeams extends StatelessWidget {
     return BlocConsumer<ToDoCubit, ToDoStates>(
       listener: (context, state) {
         if (state is ToDoGetMyJoinedTeamSuccessState) {
-          showToast(
-                  msg: 'Team created successfully',
-                  backgroundColor: Colors.green)
+          ToDoCubit.get(context).teams = [
+            ...ToDoCubit.get(context).myTeams,
+            ...ToDoCubit.get(context).myJoinedTeam,
+          ];
+          showToast(msg: state.msg!, backgroundColor: Colors.green)
               .then((value) {
             if (context.mounted) {
               Navigator.pop(context);

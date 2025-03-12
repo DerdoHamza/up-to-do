@@ -2,16 +2,22 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_thumbnail_video/index.dart';
 import 'package:get_thumbnail_video/video_thumbnail.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:up_to_do/features/calendar.dart';
+import 'package:up_to_do/features/home.dart';
+import 'package:up_to_do/features/profile.dart';
+import 'package:up_to_do/features/teams.dart';
 import 'package:up_to_do/models/add_tasks_media_model.dart';
 import 'package:up_to_do/models/get_task_model.dart';
 import 'package:up_to_do/models/get_tasks_media_model.dart';
 import 'package:up_to_do/models/get_team_model.dart';
 import 'package:up_to_do/models/task_model.dart';
 import 'package:up_to_do/models/user_model.dart';
+import 'package:up_to_do/services/cache_helper.dart';
 import 'package:up_to_do/services/constant.dart';
 import 'package:up_to_do/services/cubit/to_do_states.dart';
 
@@ -66,15 +72,6 @@ class ToDoCubit extends Cubit<ToDoStates> {
     });
   }
 
-  void signOut() {
-    emit(ToDoSignOutLoadingState());
-    Supabase.instance.client.auth.signOut().then((value) {
-      emit(ToDoSignOutSuccessState());
-    }).catchError((error) {
-      emit(ToDoSignOutErrorState(error.message.toString()));
-    });
-  }
-
   void forgetPassword({
     required String email,
   }) {
@@ -105,7 +102,6 @@ class ToDoCubit extends Cubit<ToDoStates> {
       }
       emit(ToDoGetAllTaskSuccessState());
     }).catchError((error) {
-      log(error.toString());
       emit(ToDoGetAllTaskErrorState(error.toString()));
     });
   }
@@ -148,6 +144,7 @@ class ToDoCubit extends Cubit<ToDoStates> {
     required String description,
     required int id,
     int? teamId,
+    String done = '',
   }) {
     emit(ToDoEditTaskLoadingState());
     Supabase.instance.client
@@ -157,6 +154,7 @@ class ToDoCubit extends Cubit<ToDoStates> {
           'description': description,
           'dateUpdated': DateTime.now().toIso8601String(),
           'updatedBy': userId,
+          'done': done,
         })
         .eq('id', id)
         .then((value) {
@@ -327,12 +325,10 @@ class ToDoCubit extends Cubit<ToDoStates> {
             });
           }
         }).catchError((error) {
-          log(error.toString());
           emit(ToDoPicFileErrorState(error.toString()));
         });
       }
     }).catchError((error) {
-      log(error.toString());
       emit(ToDoPicFileErrorState(error.toString()));
     });
   }
@@ -388,14 +384,35 @@ class ToDoCubit extends Cubit<ToDoStates> {
     emit(ToDoCreatTeamLoadingState());
     Supabase.instance.client.from('teams').insert(team.toMap()).then((value) {
       getMyTeams();
-      getMyJoinedTeam();
-      teams = [
-        ...myTeams,
-        ...myJoinedTeam,
-      ];
+      getMyJoinedTeam(msg: 'Team created successfully');
     }).catchError((error) {
       emit(ToDoCreatTeamErrorState(error.toString()));
     });
+  }
+
+  List<GetTeamModel> allTeams = [];
+  void getAllTeams() {
+    emit(ToDoGetAllTeamsLoadingState());
+    allTeams = [];
+    Supabase.instance.client
+        .from('teams')
+        .select('*')
+        .eq('active', true)
+        .then((value) {
+      for (var element in value) {
+        allTeams.add(GetTeamModel.fromJson(element));
+      }
+
+      emit(ToDoGetAllTeamsSuccessState());
+    }).catchError((error) {
+      emit(ToDoGetAllTeamsErrorState(error.toString()));
+    });
+  }
+
+  void getAllMyTeams() {
+    emit(ToDoGetAllMyTeamsLoadingState());
+    getMyTeams();
+    getMyJoinedTeam();
   }
 
   List<GetTeamModel> myTeams = [];
@@ -429,7 +446,7 @@ class ToDoCubit extends Cubit<ToDoStates> {
         .eq('active', true)
         .then((value) {
       getMyTeams();
-      getMyJoinedTeam();
+      getMyJoinedTeam(msg: 'Team edited successfully');
       // emit(ToDoUpdateTeamSuccessState());
     }).catchError((error) {
       emit(ToDoUpdateTeamErrorState(error.toString()));
@@ -452,11 +469,10 @@ class ToDoCubit extends Cubit<ToDoStates> {
         .eq('id', teamId)
         .then((value) {
           getMyTeams();
-          getMyJoinedTeam();
+          getMyJoinedTeam(msg: 'Team deleted successfully');
           // emit(ToDoDeleteTeamSuccessState());
         })
         .catchError((error) {
-          log(error.toString());
           emit(ToDoDeleteTeamErrorState(error.toString()));
         });
   }
@@ -480,7 +496,9 @@ class ToDoCubit extends Cubit<ToDoStates> {
 
   List<int> teamIds = [];
   List<GetTeamModel> myJoinedTeam = [];
-  void getMyJoinedTeam() {
+  void getMyJoinedTeam({
+    String? msg,
+  }) {
     teamIds = [];
     myJoinedTeam = [];
     emit(ToDoGetMyJoinedTeamLoadingState());
@@ -501,11 +519,13 @@ class ToDoCubit extends Cubit<ToDoStates> {
         for (var element in value) {
           myJoinedTeam.add(GetTeamModel.fromJson(element));
         }
-        emit(ToDoGetMyJoinedTeamSuccessState());
+
+        emit(ToDoGetMyJoinedTeamSuccessState(msg));
       }).catchError((error) {
         emit(ToDoGetMyJoinedTeamErrorState(error.toString()));
       });
     }).catchError((error) {
+      log(error.toString());
       emit(ToDoGetMyJoinedTeamErrorState(error.toString()));
     });
   }
@@ -550,7 +570,7 @@ class ToDoCubit extends Cubit<ToDoStates> {
     emit(ToDoJoinTeamLoadingState());
     Supabase.instance.client
         .from('users_teams')
-        .select()
+        .select('*')
         .eq('userId', userId!)
         .eq('teamId', teamId)
         .then((value) {
@@ -558,8 +578,10 @@ class ToDoCubit extends Cubit<ToDoStates> {
         Supabase.instance.client.from('users_teams').insert({
           'userId': userId,
           'teamId': teamId,
+        }).then((value) {
+          getMyJoinedTeam(msg: 'You are joined team successfully');
+          // getMyTeams();
         });
-        emit(ToDoJoinTeamSuccessState());
       } else {
         emit(ToDoJoinTeamErrorState('you already joined this team !'));
       }
@@ -595,11 +617,36 @@ class ToDoCubit extends Cubit<ToDoStates> {
     });
   }
 
-  bool isVisible = true;
-  void navBarVisibility({
-    required bool value,
-  }) {
-    isVisible = value;
-    emit(ToDoNavBarVisibilityState());
+  void logOut() {
+    CacheHelper.removeCacheData(key: 'userId');
+    currentIndex = 0;
+    emit(ToDoLogOutState());
+  }
+
+  List<BottomNavigationBarItem> items = [
+    BottomNavigationBarItem(icon: Icon(CupertinoIcons.home), label: 'Home'),
+    BottomNavigationBarItem(
+        icon: Icon(CupertinoIcons.person_2_square_stack), label: 'Teams'),
+    BottomNavigationBarItem(
+        icon: Icon(CupertinoIcons.calendar), label: 'Calendar'),
+    BottomNavigationBarItem(
+        icon: Icon(CupertinoIcons.profile_circled), label: 'Profile'),
+  ];
+  List<String> titles = [
+    'Home Screen',
+    'Teams',
+    'Calendar',
+    'Profile',
+  ];
+  List<Widget> screens = [
+    Home(),
+    Teams(),
+    Calendar(),
+    Profile(),
+  ];
+  int currentIndex = 0;
+  void changeBottomNavBarIndex({required int index}) {
+    currentIndex = index;
+    emit(ToDoChangeBottomNavBarIndexState());
   }
 }

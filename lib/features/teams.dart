@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:up_to_do/features/teams/creat_teams.dart';
 import 'package:up_to_do/features/teams/edit_team.dart';
 import 'package:up_to_do/models/get_team_model.dart';
 import 'package:up_to_do/services/component.dart';
 import 'package:up_to_do/services/constant.dart';
 import 'package:up_to_do/services/cubit/to_do_cubit.dart';
 import 'package:up_to_do/services/cubit/to_do_states.dart';
-
 import 'teams/team_tasks.dart';
 
 class Teams extends StatelessWidget {
@@ -21,70 +19,35 @@ class Teams extends StatelessWidget {
     return BlocConsumer<ToDoCubit, ToDoStates>(
       listener: (context, state) {
         if (state is ToDoGetMyJoinedTeamSuccessState) {
-          showToast(
-                  msg: 'Team deleted successfully',
-                  backgroundColor: Colors.green)
-              .then((vaue) {
-            if (context.mounted) {
-              ToDoCubit.get(context).teams = [
-                ...ToDoCubit.get(context).myTeams,
-                ...ToDoCubit.get(context).myJoinedTeam,
-              ];
-            }
-          });
+          ToDoCubit.get(context).teams = [
+            ...ToDoCubit.get(context).myTeams,
+            ...ToDoCubit.get(context).myJoinedTeam,
+          ];
+          showToast(msg: state.msg!, backgroundColor: Colors.green);
         }
       },
       builder: (context, state) {
         var cubit = ToDoCubit.get(context);
-
-        ToDoCubit.get(context).teams = [
-          ...ToDoCubit.get(context).myTeams,
-          ...ToDoCubit.get(context).myJoinedTeam,
-        ];
-
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('Teams'),
-            actions: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.add_circle_outline),
+        return cubit.teams.isEmpty
+            ? Center(
+                child: Text('There is no any teams'),
               )
-            ],
-          ),
-          floatingActionButton: Padding(
-            padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight * 1.25),
-            child: FloatingActionButton(
-              onPressed: () {
-                navigateTo(
-                  context: context,
-                  screen: CreatTeams(),
-                );
-              },
-              child: Icon(Icons.add),
-            ),
-          ),
-          body: cubit.teams.isEmpty
-              ? Center(
-                  child: Text('There is no any teams'),
-                )
-              : state is ToDoDeleteTeamLoadingState
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: ListView.separated(
-                        itemBuilder: (context, index) => TeamItem(
-                          team: cubit.teams[index],
-                          cubit: cubit,
-                        ),
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: 10),
-                        itemCount: cubit.teams.length,
+            : state is ToDoDeleteTeamLoadingState
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: ListView.separated(
+                      itemBuilder: (context, index) => TeamItem(
+                        team: cubit.teams[index],
+                        cubit: cubit,
                       ),
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 10),
+                      itemCount: cubit.teams.length,
                     ),
-        );
+                  );
       },
     );
   }
@@ -102,13 +65,13 @@ class TeamItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        cubit.navBarVisibility(value: false);
         cubit.getTeamTasks(teamId: team.id);
         navigateTo(
             context: context,
             screen: TeamTasks(
               teamId: team.id,
               leaderId: team.leaderId,
+              teamTitle: team.title,
             ));
       },
       child: Container(
@@ -120,12 +83,18 @@ class TeamItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(team.title,
-                    style: GoogleFonts.adamina(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    )),
+                Text(
+                  team.title,
+                  style: GoogleFonts.adamina(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (cubit.myJoinedTeam.contains(team))
+                  Icon(Icons.beenhere_outlined),
+                if (cubit.myTeams.contains(team)) Icon(Icons.vpn_key_outlined),
               ],
             ),
             SizedBox(height: 5),

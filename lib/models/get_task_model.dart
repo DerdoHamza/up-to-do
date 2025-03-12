@@ -11,6 +11,7 @@ class GetTaskModel {
   String dateUpdated = '';
   late String userId;
   int? teamId;
+  String done = '';
 
   GetTaskModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -25,6 +26,7 @@ class GetTaskModel {
     dateUpdated = json['dateUpdated'];
     userId = json['userId'];
     teamId = json['teamId'];
+    done = json['done'];
   }
   Map<String, dynamic> toMap() => {
         'id': id,
@@ -39,5 +41,6 @@ class GetTaskModel {
         'dateUpdated': dateUpdated,
         'userId': userId,
         'teamId': teamId,
+        'done': done,
       };
 }

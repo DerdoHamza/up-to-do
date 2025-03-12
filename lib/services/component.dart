@@ -87,7 +87,9 @@ class TaskItem extends StatelessWidget {
     required this.task,
     required this.edit,
     required this.remove,
+    this.teamTasks = false,
   });
+  final bool teamTasks;
   final GetTaskModel task;
   final ToDoCubit cubit;
   final VoidCallback edit;
@@ -105,6 +107,26 @@ class TaskItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (teamTasks)
+              Align(
+                  alignment: Alignment.center,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: InkWell(
+                        onTap: () {
+                          cubit.editTask(
+                              title: task.title,
+                              description: task.description,
+                              id: task.id,
+                              done: 'done');
+                        },
+                        child: Text(
+                          'Done',
+                          style: GoogleFonts.adamina(
+                            color: task.done == '' ? Colors.red : Colors.green,
+                          ),
+                        )),
+                  )),
             Row(
               children: [
                 Text(

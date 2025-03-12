@@ -27,7 +27,7 @@ class Login extends StatelessWidget {
         }
         if (state is ToDoLogInSuccessState) {
           showToast(
-            msg: 'Wellcome name in Up To Do app',
+            msg: 'Wellcome in Up To Do app',
             backgroundColor: Colors.green,
           ).then((value) {
             CacheHelper.saveCacheData(

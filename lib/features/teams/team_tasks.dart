@@ -11,24 +11,30 @@ import 'package:up_to_do/services/cubit/to_do_states.dart';
 class TeamTasks extends StatelessWidget {
   final int teamId;
   final String leaderId;
+  final String teamTitle;
   const TeamTasks({
     super.key,
     required this.teamId,
     required this.leaderId,
+    required this.teamTitle,
   });
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ToDoCubit, ToDoStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is ToDoGetAllTaskSuccessState) {
+          ToDoCubit.get(context).getTeamTasks(teamId: teamId);
+          showToast(msg: 'Task Done', backgroundColor: Colors.green);
+        }
+      },
       builder: (context, state) {
         var cubit = ToDoCubit.get(context);
         return Scaffold(
             appBar: AppBar(
-              title: Text('Team Tasks'),
+              title: Text('$teamTitle Team'),
               leading: IconButton(
                   onPressed: () {
-                    cubit.navBarVisibility(value: true);
                     Navigator.pop(context);
                   },
                   icon: Icon(Icons.arrow_back_ios)),
@@ -59,6 +65,7 @@ class TeamTasks extends StatelessWidget {
                             itemBuilder: (context, index) => TaskItem(
                                   cubit: cubit,
                                   task: cubit.teamTasks[index],
+                                  teamTasks: true,
                                   edit: () {
                                     navigateTo(
                                       context: context,
@@ -102,8 +109,11 @@ class TeamTasks extends StatelessWidget {
                                                     )),
                                                 TextButton(
                                                     onPressed: () {
-                                                      // ToDoCubit.get(context)
-                                                      //     .deleteTask(teamId: team.id);
+                                                      ToDoCubit.get(context)
+                                                          .deleteTask(
+                                                              data: cubit
+                                                                      .teamTasks[
+                                                                  index]);
                                                       Navigator.pop(context);
                                                     },
                                                     child: Text(

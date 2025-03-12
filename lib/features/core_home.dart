@@ -1,11 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
-import 'package:up_to_do/features/calendar.dart';
-import 'package:up_to_do/features/home.dart';
-import 'package:up_to_do/features/profile.dart';
-import 'package:up_to_do/features/teams.dart';
+import 'package:up_to_do/features/add_task.dart';
+import 'package:up_to_do/features/all_teams.dart';
+import 'package:up_to_do/features/teams/creat_teams.dart';
+import 'package:up_to_do/services/component.dart';
 import 'package:up_to_do/services/cubit/to_do_cubit.dart';
 import 'package:up_to_do/services/cubit/to_do_states.dart';
 
@@ -15,77 +13,61 @@ class CoreHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ToDoCubit, ToDoStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is ToDoGetAllTeamsSuccessState) {
+          navigateTo(context: context, screen: AllTeams());
+        }
+      },
       builder: (context, state) {
         var cubit = ToDoCubit.get(context);
         return Scaffold(
-          body: PersistentTabView(
-            context,
-            screens: [
-              Home(),
-              Teams(),
-              Calendar(),
-              Profile(),
+          appBar: AppBar(
+            title: Text(cubit.titles[cubit.currentIndex]),
+            actions: [
+              if (cubit.currentIndex == 1)
+                IconButton(
+                    onPressed: () {
+                      cubit.getAllTeams();
+                    },
+                    icon: Icon(Icons.add_circle_outline))
             ],
-            items: [
-              PersistentBottomNavBarItem(
-                icon: Icon(CupertinoIcons.home),
-                title: ("Home"),
-                activeColorPrimary: CupertinoColors.activeBlue,
-                inactiveColorPrimary: CupertinoColors.systemGrey,
-              ),
-              PersistentBottomNavBarItem(
-                icon: Icon(CupertinoIcons.person_2_square_stack),
-                title: ("Teams"),
-                activeColorPrimary: CupertinoColors.activeBlue,
-                inactiveColorPrimary: CupertinoColors.systemGrey,
-              ),
-              PersistentBottomNavBarItem(
-                icon: Icon(CupertinoIcons.calendar),
-                title: ("Calendar"),
-                activeColorPrimary: CupertinoColors.activeBlue,
-                inactiveColorPrimary: CupertinoColors.systemGrey,
-              ),
-              PersistentBottomNavBarItem(
-                icon: Icon(CupertinoIcons.profile_circled),
-                title: ("Profile"),
-                activeColorPrimary: CupertinoColors.activeBlue,
-                inactiveColorPrimary: CupertinoColors.systemGrey,
-              ),
-            ],
-            handleAndroidBackButtonPress: true,
-            resizeToAvoidBottomInset: true,
-            stateManagement: true,
-            hideNavigationBarWhenKeyboardAppears: true,
-            popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-            backgroundColor: Colors.grey.shade900,
-            isVisible: cubit.isVisible,
-            animationSettings: const NavBarAnimationSettings(
-              navBarItemAnimation: ItemAnimationSettings(
-                duration: Duration(milliseconds: 400),
-                curve: Curves.ease,
-              ),
-              screenTransitionAnimation: ScreenTransitionAnimationSettings(
-                animateTabTransition: true,
-                duration: Duration(milliseconds: 200),
-                screenTransitionAnimationType:
-                    ScreenTransitionAnimationType.fadeIn,
-              ),
-            ),
-            confineToSafeArea: true,
-            navBarHeight: kBottomNavigationBarHeight * 1.1,
-            navBarStyle: NavBarStyle.style1,
-            decoration: NavBarDecoration(
-              borderRadius: BorderRadius.circular(30),
-              colorBehindNavBar: Colors.transparent,
-            ),
-            margin: EdgeInsets.only(
-              bottom: 10,
-              left: 10,
-              right: 10,
+          ),
+          bottomNavigationBar: Container(
+            margin: EdgeInsets.only(right: 10, left: 10, bottom: 10),
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(40)),
+            child: BottomNavigationBar(
+              items: cubit.items,
+              onTap: (value) {
+                cubit.changeBottomNavBarIndex(index: value);
+              },
+              type: BottomNavigationBarType.fixed,
+              currentIndex: cubit.currentIndex,
+              backgroundColor: Colors.blueGrey,
+              elevation: 5,
+              selectedItemColor: const Color.fromARGB(255, 48, 10, 113),
+              unselectedItemColor: Colors.white,
             ),
           ),
+          floatingActionButton: cubit.currentIndex < 2
+              ? FloatingActionButton(
+                  onPressed: () {
+                    if (cubit.currentIndex == 0) {
+                      navigateTo(
+                        context: context,
+                        screen: AddTask(),
+                      );
+                    } else if (cubit.currentIndex == 1) {
+                      navigateTo(
+                        context: context,
+                        screen: CreatTeams(),
+                      );
+                    }
+                  },
+                  child: Icon(Icons.add),
+                )
+              : Container(),
+          body: cubit.screens[cubit.currentIndex],
         );
       },
     );

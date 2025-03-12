@@ -21,14 +21,8 @@ class EditTeam extends StatelessWidget {
     return BlocConsumer<ToDoCubit, ToDoStates>(
       listener: (context, state) {
         if (state is ToDoGetMyJoinedTeamSuccessState) {
-          showToast(
-                  msg: 'Team edited successfully',
-                  backgroundColor: Colors.green)
-              .then((value) {
-            if (context.mounted) {
-              Navigator.pop(context);
-            }
-          });
+          showToast(msg: state.msg!, backgroundColor: Colors.green);
+          Navigator.pop(context);
         }
       },
       builder: (context, state) {
@@ -60,18 +54,23 @@ class EditTeam extends StatelessWidget {
                     prefix: Icon(Icons.description_outlined),
                   ),
                   SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (formKey.currentState!.validate()) {
-                        team.title = titleController.text;
-                        team.description = descriptionController.text;
-                        team.dateUpdated = DateTime.now().toIso8601String();
-                        team.updatedBy = userId!;
-                        cubit.updateTeam(teamId: team.id, team: team);
-                      }
-                    },
-                    child: Text('Edit Team'),
-                  ),
+                  state is ToDoUpdateTeamLoadingState
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : ElevatedButton(
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              team.title = titleController.text;
+                              team.description = descriptionController.text;
+                              team.dateUpdated =
+                                  DateTime.now().toIso8601String();
+                              team.updatedBy = userId!;
+                              cubit.updateTeam(teamId: team.id, team: team);
+                            }
+                          },
+                          child: Text('Edit Team'),
+                        ),
                 ],
               ),
             ),
