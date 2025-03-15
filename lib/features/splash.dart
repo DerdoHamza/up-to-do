@@ -28,6 +28,7 @@ class _SplashState extends State<Splash> {
     userId = CacheHelper.getCacheData(key: 'userId');
 
     if (userId != null) {
+      ToDoCubit.get(context).getUserData();
       ToDoCubit.get(context).getAllTasks();
       ToDoCubit.get(context).getAllMyTeams();
 

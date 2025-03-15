@@ -649,4 +649,57 @@ class ToDoCubit extends Cubit<ToDoStates> {
     currentIndex = index;
     emit(ToDoChangeBottomNavBarIndexState());
   }
+
+  void updateUserEmail({
+    required String email,
+  }) {
+    emit(ToDoUpdateUserEmailLoadingState());
+    Supabase.instance.client.auth
+        .updateUser(UserAttributes(
+      email: email.toLowerCase().trim(),
+    ))
+        .then((value) {
+      emit(ToDoUpdateUserEmailSuccessState());
+    }).catchError((error) {
+      emit(ToDoUpdateUserEmailErrorState(error.toString()));
+    });
+  }
+
+  void updateUserPassword({required String password}) {
+    emit(ToDoUpdateUserPasswordLoadingState());
+    Supabase.instance.client.auth
+        .updateUser(UserAttributes(
+      password: password,
+    ))
+        .then((value) {
+      emit(ToDoUpdateUserPasswordSuccessState());
+    }).catchError((error) {
+      emit(ToDoUpdateUserPasswordErrorState(error.toString()));
+    });
+  }
+
+  void updateUserInfo({required UserModel userInfo}) {
+    emit(ToDoUpdateUserInfoLoadingState());
+    Supabase.instance.client.auth
+        .updateUser(UserAttributes(
+      data: userInfo,
+    ))
+        .then((value) {
+      emit(ToDoUpdateUserInfoSuccessState());
+    }).catchError((error) {
+      emit(ToDoUpdateUserInfoErrorState(error.toString()));
+    });
+  }
+
+  UserModel? user;
+  void getUserData() {
+    emit(ToDoGetUserDataLoadingState());
+    Supabase.instance.client.auth.getUser().then((value) {
+      user = UserModel.fromJson(value.user!.userMetadata!);
+
+      emit(ToDoGetUserDataSuccessState());
+    }).catchError((error) {
+      emit(ToDoGetUserDataErrorState(error.toString()));
+    });
+  }
 }

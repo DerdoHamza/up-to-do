@@ -229,3 +229,39 @@ class ToDoGetAllTeamsErrorState extends ToDoStates {
 }
 
 class ToDoChangeBottomNavBarIndexState extends ToDoStates {}
+
+class ToDoUpdateUserEmailLoadingState extends ToDoStates {}
+
+class ToDoUpdateUserEmailSuccessState extends ToDoStates {}
+
+class ToDoUpdateUserEmailErrorState extends ToDoStates {
+  final String error;
+  ToDoUpdateUserEmailErrorState(this.error);
+}
+
+class ToDoUpdateUserPasswordLoadingState extends ToDoStates {}
+
+class ToDoUpdateUserPasswordSuccessState extends ToDoStates {}
+
+class ToDoUpdateUserPasswordErrorState extends ToDoStates {
+  final String error;
+  ToDoUpdateUserPasswordErrorState(this.error);
+}
+
+class ToDoUpdateUserInfoLoadingState extends ToDoStates {}
+
+class ToDoUpdateUserInfoSuccessState extends ToDoStates {}
+
+class ToDoUpdateUserInfoErrorState extends ToDoStates {
+  final String error;
+  ToDoUpdateUserInfoErrorState(this.error);
+}
+
+class ToDoGetUserDataLoadingState extends ToDoStates {}
+
+class ToDoGetUserDataSuccessState extends ToDoStates {}
+
+class ToDoGetUserDataErrorState extends ToDoStates {
+  final String error;
+  ToDoGetUserDataErrorState(this.error);
+}
