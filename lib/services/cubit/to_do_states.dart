@@ -259,9 +259,21 @@ class ToDoUpdateUserInfoErrorState extends ToDoStates {
 
 class ToDoGetUserDataLoadingState extends ToDoStates {}
 
-class ToDoGetUserDataSuccessState extends ToDoStates {}
+class ToDoGetUserDataSuccessState extends ToDoStates {
+  final String name;
+  ToDoGetUserDataSuccessState(this.name);
+}
 
 class ToDoGetUserDataErrorState extends ToDoStates {
   final String error;
   ToDoGetUserDataErrorState(this.error);
+}
+
+class ToDoPicImageLoadingState extends ToDoStates {}
+
+class ToDoPicImageSuccessState extends ToDoStates {}
+
+class ToDoPicImageErrorState extends ToDoStates {
+  final String error;
+  ToDoPicImageErrorState(this.error);
 }

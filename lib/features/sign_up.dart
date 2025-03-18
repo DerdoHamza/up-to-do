@@ -149,6 +149,7 @@ class SignUp extends StatelessWidget {
                                       phone: phoneController.text,
                                       email: emailController.text,
                                       password: passwordController.text,
+                                      image: 'assets/images/app_icon.png',
                                     );
                                     cubit.signUp(user: user);
                                   }

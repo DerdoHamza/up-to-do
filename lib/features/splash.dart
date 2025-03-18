@@ -42,6 +42,12 @@ class _SplashState extends State<Splash> {
   Widget build(BuildContext context) {
     return BlocConsumer<ToDoCubit, ToDoStates>(
       listener: (context, state) {
+        if (state is ToDoGetUserDataSuccessState) {
+          showToast(
+            msg: 'Wellcome ${state.name} in Up To Do App',
+            backgroundColor: Colors.green,
+          );
+        }
         if (state is ToDoGetMyJoinedTeamSuccessState) {
           Future.delayed(Duration(seconds: 2), () {
             if (context.mounted) {

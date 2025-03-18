@@ -26,19 +26,23 @@ class Login extends StatelessWidget {
           );
         }
         if (state is ToDoLogInSuccessState) {
+          CacheHelper.saveCacheData(
+            key: 'userId',
+            value: state.userId,
+          ).then((value) {
+            if (context.mounted) {
+              ToDoCubit.get(context).getAllTasks();
+            }
+          });
+        }
+        if (state is ToDoGetUserDataSuccessState) {
           showToast(
-            msg: 'Wellcome in Up To Do app',
+            msg: 'Wellcome ${state.name} in Up To Do app',
             backgroundColor: Colors.green,
           ).then((value) {
-            CacheHelper.saveCacheData(
-              key: 'userId',
-              value: state.userId,
-            ).then((value) {
-              if (context.mounted) {
-                ToDoCubit.get(context).getAllTasks();
-                navigateAndReplace(context: context, screen: CoreHome());
-              }
-            });
+            if (context.mounted) {
+              navigateAndReplace(context: context, screen: CoreHome());
+            }
           });
         }
       },

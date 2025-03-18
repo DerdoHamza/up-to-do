@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_thumbnail_video/index.dart';
 import 'package:get_thumbnail_video/video_thumbnail.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:up_to_do/features/calendar.dart';
 import 'package:up_to_do/features/home.dart';
@@ -67,6 +68,7 @@ class ToDoCubit extends Cubit<ToDoStates> {
     )
         .then((value) {
       emit(ToDoLogInSuccessState(value.user!.id));
+      getUserData();
     }).catchError((error) {
       emit(ToDoLogInErrorState(error.message.toString()));
     });
@@ -678,14 +680,17 @@ class ToDoCubit extends Cubit<ToDoStates> {
     });
   }
 
-  void updateUserInfo({required UserModel userInfo}) {
+  void updateUserInfo({
+    required UserModel userInfo,
+  }) {
     emit(ToDoUpdateUserInfoLoadingState());
     Supabase.instance.client.auth
         .updateUser(UserAttributes(
-      data: userInfo,
+      data: userInfo.toMap(),
     ))
         .then((value) {
-      emit(ToDoUpdateUserInfoSuccessState());
+      getUserData();
+      // emit(ToDoUpdateUserInfoSuccessState());
     }).catchError((error) {
       emit(ToDoUpdateUserInfoErrorState(error.toString()));
     });
@@ -696,10 +701,42 @@ class ToDoCubit extends Cubit<ToDoStates> {
     emit(ToDoGetUserDataLoadingState());
     Supabase.instance.client.auth.getUser().then((value) {
       user = UserModel.fromJson(value.user!.userMetadata!);
-
-      emit(ToDoGetUserDataSuccessState());
+      log(value.user!.userMetadata!.toString());
+      emit(ToDoGetUserDataSuccessState(user!.name));
     }).catchError((error) {
       emit(ToDoGetUserDataErrorState(error.toString()));
+    });
+  }
+
+  File? image;
+  void picImage({
+    required UserModel user,
+  }) {
+    emit(ToDoPicImageLoadingState());
+
+    ImagePicker().pickImage(source: ImageSource.gallery).then((value) {
+      if (value != null) {
+        image = File(value.path);
+        Supabase.instance.client.storage
+            .from('profile-images')
+            .upload(
+              Uri.file(image!.path).pathSegments.last,
+              image!,
+            )
+            .then((value) {
+          user.image = Supabase.instance.client.storage
+              .from('profile-images')
+              .getPublicUrl(Uri.file(image!.path).pathSegments.last);
+
+          updateUserInfo(userInfo: user);
+        });
+      } else {
+        image = null;
+      }
+
+      emit(ToDoPicImageSuccessState());
+    }).catchError((error) {
+      emit(ToDoPicImageErrorState(error.toString()));
     });
   }
 }
