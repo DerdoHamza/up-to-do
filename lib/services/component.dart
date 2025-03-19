@@ -150,6 +150,10 @@ class TaskItem extends StatelessWidget {
                   },
                   icon: Icon(Icons.video_library_outlined),
                 ),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.favorite_outline),
+                ),
                 if (task.userId == userId)
                   IconButton(
                     onPressed: () async {

@@ -663,6 +663,7 @@ class ToDoCubit extends Cubit<ToDoStates> {
         .then((value) {
       emit(ToDoUpdateUserEmailSuccessState());
     }).catchError((error) {
+      log(error.toString());
       emit(ToDoUpdateUserEmailErrorState(error.toString()));
     });
   }

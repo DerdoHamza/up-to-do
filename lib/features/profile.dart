@@ -7,6 +7,8 @@ import 'package:up_to_do/services/component.dart';
 import 'package:up_to_do/services/cubit/to_do_cubit.dart';
 import 'package:up_to_do/services/cubit/to_do_states.dart';
 
+import 'change_password.dart';
+
 class Profile extends StatelessWidget {
   const Profile({super.key});
 
@@ -42,7 +44,9 @@ class Profile extends StatelessWidget {
                           child: CircleAvatar(
                             radius: 45,
                             child: Image(
-                              image: NetworkImage(cubit.user!.image),
+                              image: cubit.user!.image.contains('assets')
+                                  ? AssetImage(cubit.user!.image)
+                                  : NetworkImage(cubit.user!.image),
                               fit: BoxFit.contain,
                             ),
                           ),
@@ -99,7 +103,13 @@ class Profile extends StatelessWidget {
                     },
                     child: Text('Change My Email')),
                 FilledButton(
-                    onPressed: () {}, child: Text('Change My Password')),
+                    onPressed: () {
+                      navigateTo(
+                        context: context,
+                        screen: ChangePassword(user: cubit.user!),
+                      );
+                    },
+                    child: Text('Change My Password')),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: CustomDivider(),

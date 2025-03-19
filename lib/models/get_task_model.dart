@@ -12,6 +12,7 @@ class GetTaskModel {
   late String userId;
   int? teamId;
   String done = '';
+  late bool isFavorite;
 
   GetTaskModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -27,6 +28,7 @@ class GetTaskModel {
     userId = json['userId'];
     teamId = json['teamId'];
     done = json['done'];
+    isFavorite = json['isFavorite'];
   }
   Map<String, dynamic> toMap() => {
         'id': id,
@@ -42,5 +44,6 @@ class GetTaskModel {
         'userId': userId,
         'teamId': teamId,
         'done': done,
+        'isFavorite': isFavorite,
       };
 }

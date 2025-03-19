@@ -5,11 +5,11 @@ import 'package:up_to_do/services/component.dart';
 import 'package:up_to_do/services/cubit/to_do_cubit.dart';
 import 'package:up_to_do/services/cubit/to_do_states.dart';
 
-class ChangeEmail extends StatelessWidget {
-  final emailController = TextEditingController();
+class ChangePassword extends StatelessWidget {
+  final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   final UserModel user;
-  ChangeEmail({
+  ChangePassword({
     super.key,
     required this.user,
   });
@@ -26,7 +26,7 @@ class ChangeEmail extends StatelessWidget {
         var cubit = ToDoCubit.get(context);
         return Scaffold(
           appBar: AppBar(
-            title: Text('Change Email'),
+            title: Text('Change Password'),
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -35,10 +35,10 @@ class ChangeEmail extends StatelessWidget {
               child: Column(
                 children: [
                   CustomTextFormField(
-                    controller: emailController,
-                    label: 'New Email',
-                    prefix: Icon(Icons.email_outlined),
-                    type: TextInputType.emailAddress,
+                    controller: passwordController,
+                    label: 'New Password',
+                    prefix: Icon(Icons.lock_outline),
+                    type: TextInputType.visiblePassword,
                   ),
                   SizedBox(height: 20),
                   state is ToDoUpdateUserInfoLoadingState
@@ -48,13 +48,13 @@ class ChangeEmail extends StatelessWidget {
                       : FilledButton(
                           onPressed: () {
                             if (formKey.currentState!.validate()) {
-                              user.email = emailController.text;
-                              cubit.updateUserEmail(
-                                  email: emailController.text);
+                              user.password = passwordController.text;
+                              cubit.updateUserPassword(
+                                  password: passwordController.text);
                               cubit.updateUserInfo(userInfo: user);
                             }
                           },
-                          child: Text('Update Email'),
+                          child: Text('Update Password'),
                         ),
                 ],
               ),
