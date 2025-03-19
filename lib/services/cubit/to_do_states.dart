@@ -277,3 +277,12 @@ class ToDoPicImageErrorState extends ToDoStates {
   final String error;
   ToDoPicImageErrorState(this.error);
 }
+
+class ToDoInFavoriteTaskLoadingState extends ToDoStates {}
+
+class ToDoInFavoriteTaskSuccessState extends ToDoStates {}
+
+class ToDoInFavoriteTaskErrorState extends ToDoStates {
+  final String error;
+  ToDoInFavoriteTaskErrorState(this.error);
+}

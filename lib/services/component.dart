@@ -151,8 +151,12 @@ class TaskItem extends StatelessWidget {
                   icon: Icon(Icons.video_library_outlined),
                 ),
                 IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.favorite_outline),
+                  onPressed: () {
+                    cubit.inFavoriteTask(task: task);
+                  },
+                  icon: task.isFavorite
+                      ? Icon(Icons.favorite_outlined)
+                      : Icon(Icons.favorite_outline),
                 ),
                 if (task.userId == userId)
                   IconButton(

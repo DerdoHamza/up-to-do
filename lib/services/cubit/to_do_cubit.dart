@@ -740,4 +740,24 @@ class ToDoCubit extends Cubit<ToDoStates> {
       emit(ToDoPicImageErrorState(error.toString()));
     });
   }
+
+  void inFavoriteTask({
+    required GetTaskModel task,
+  }) {
+    emit(ToDoInFavoriteTaskLoadingState());
+    Supabase.instance.client
+        .from('tasks')
+        .update({
+          'isFavorite': !task.isFavorite,
+          'dateUpdated': DateTime.now().toIso8601String(),
+        })
+        .eq('id', task.id)
+        .then((value) {
+          getAllTasks();
+          // emit(ToDoInFavoriteTaskSuccessState());
+        })
+        .catchError((error) {
+          emit(ToDoInFavoriteTaskErrorState(error.toString()));
+        });
+  }
 }
