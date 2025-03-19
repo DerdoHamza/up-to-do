@@ -22,6 +22,7 @@ class EditTask extends StatelessWidget {
     return BlocConsumer<ToDoCubit, ToDoStates>(
       listener: (context, state) {
         if (state is ToDoGetAllTaskSuccessState) {
+          ToDoCubit.get(context).getFavorite();
           Navigator.pop(context);
         }
       },

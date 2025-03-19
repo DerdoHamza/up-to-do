@@ -286,3 +286,12 @@ class ToDoInFavoriteTaskErrorState extends ToDoStates {
   final String error;
   ToDoInFavoriteTaskErrorState(this.error);
 }
+
+class ToDoGetFavoriteLoadingState extends ToDoStates {}
+
+class ToDoGetFavoriteSuccessState extends ToDoStates {}
+
+class ToDoGetFavoriteErrorState extends ToDoStates {
+  final String error;
+  ToDoGetFavoriteErrorState(this.error);
+}

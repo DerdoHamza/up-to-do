@@ -9,6 +9,7 @@ import 'package:get_thumbnail_video/video_thumbnail.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:up_to_do/features/calendar.dart';
+import 'package:up_to_do/features/favorite.dart';
 import 'package:up_to_do/features/home.dart';
 import 'package:up_to_do/features/profile.dart';
 import 'package:up_to_do/features/teams.dart';
@@ -186,6 +187,7 @@ class ToDoCubit extends Cubit<ToDoStates> {
           data.id,
         )
         .then((value) {
+          getFavorite();
           getAllTasks();
         })
         .catchError((error) {
@@ -632,18 +634,22 @@ class ToDoCubit extends Cubit<ToDoStates> {
     BottomNavigationBarItem(
         icon: Icon(CupertinoIcons.calendar), label: 'Calendar'),
     BottomNavigationBarItem(
+        icon: Icon(CupertinoIcons.square_favorites_alt), label: 'Favorite'),
+    BottomNavigationBarItem(
         icon: Icon(CupertinoIcons.profile_circled), label: 'Profile'),
   ];
   List<String> titles = [
     'Home Screen',
     'Teams',
     'Calendar',
+    'Favorite',
     'Profile',
   ];
   List<Widget> screens = [
     Home(),
     Teams(),
     Calendar(),
+    Favorite(),
     Profile(),
   ];
   int currentIndex = 0;
@@ -753,11 +759,33 @@ class ToDoCubit extends Cubit<ToDoStates> {
         })
         .eq('id', task.id)
         .then((value) {
+          getFavorite();
           getAllTasks();
           // emit(ToDoInFavoriteTaskSuccessState());
         })
         .catchError((error) {
           emit(ToDoInFavoriteTaskErrorState(error.toString()));
         });
+  }
+
+  List<GetTaskModel> favorite = [];
+  void getFavorite() {
+    favorite = [];
+    emit(ToDoGetFavoriteLoadingState());
+    Supabase.instance.client
+        .from('tasks')
+        .select('*')
+        .eq('userId', userId!)
+        .eq('active', true)
+        .isFilter('teamId', null)
+        .eq('isFavorite', true)
+        .then((value) {
+      for (var element in value) {
+        favorite.add(GetTaskModel.fromJson(element));
+      }
+      emit(ToDoGetFavoriteSuccessState());
+    }).catchError((error) {
+      emit(ToDoGetFavoriteErrorState(error.toString()));
+    });
   }
 }
