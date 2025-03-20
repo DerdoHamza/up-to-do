@@ -788,4 +788,33 @@ class ToDoCubit extends Cubit<ToDoStates> {
       emit(ToDoGetFavoriteErrorState(error.toString()));
     });
   }
+
+  List<GetTaskModel> calendarTasks = [];
+  void calendar() {
+    calendarTasks = [];
+    emit(ToDoCalendarTasksLoadingState());
+    Supabase.instance.client
+        .from('tasks')
+        .select('*')
+        .eq('userId', userId!)
+        .eq('active', true)
+        .isFilter('teamId', null)
+        .neq('scheduledNotification', '')
+        .then((value) {
+      for (var element in value) {
+        calendarTasks.add(GetTaskModel.fromJson(element));
+      }
+      emit(ToDoCalendarTasksSuccessState());
+    }).catchError((error) {
+      emit(ToDoCalendarTasksErrorState(error.toString()));
+    });
+  }
+
+  DateTime? selectedDay;
+  void dateSelected({
+    required DateTime day,
+  }) {
+    selectedDay = day;
+    emit(ToDoDateSelectedSuccessState());
+  }
 }

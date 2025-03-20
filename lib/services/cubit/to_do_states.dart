@@ -295,3 +295,14 @@ class ToDoGetFavoriteErrorState extends ToDoStates {
   final String error;
   ToDoGetFavoriteErrorState(this.error);
 }
+
+class ToDoCalendarTasksLoadingState extends ToDoStates {}
+
+class ToDoCalendarTasksSuccessState extends ToDoStates {}
+
+class ToDoCalendarTasksErrorState extends ToDoStates {
+  final String error;
+  ToDoCalendarTasksErrorState(this.error);
+}
+
+class ToDoDateSelectedSuccessState extends ToDoStates {}

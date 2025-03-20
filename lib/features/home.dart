@@ -13,7 +13,11 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ToDoCubit, ToDoStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is ToDoGetAllTaskSuccessState) {
+          ToDoCubit.get(context).calendar();
+        }
+      },
       builder: (context, state) {
         var cubit = ToDoCubit.get(context);
         return PopScope(

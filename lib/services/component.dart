@@ -239,6 +239,7 @@ class TaskItem extends StatelessWidget {
                                     body: task.description,
                                     id: task.id,
                                   );
+                                  // cubit.calendar();
                                   Navigator.pop(context);
                                 }
                               },

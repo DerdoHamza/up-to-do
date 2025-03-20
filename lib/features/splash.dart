@@ -30,6 +30,7 @@ class _SplashState extends State<Splash> {
     if (userId != null) {
       ToDoCubit.get(context).getUserData();
       ToDoCubit.get(context).getFavorite();
+      ToDoCubit.get(context).calendar();
       ToDoCubit.get(context).getAllTasks();
       ToDoCubit.get(context).getAllMyTeams();
 
